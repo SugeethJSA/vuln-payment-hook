@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerable Webhook Demo - Educational</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .warning-banner {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .security-toggle {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .security-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        .status-indicator.insecure {
+            background: #ff4444;
+        }
+
+        .status-indicator.secure {
+            background: #44ff44;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.5; }
+        }
+
+        .toggle-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .product-card {
+            text-align: center;
+        }
+
+        .product-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 48px;
+            color: #667eea;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .features {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .features li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #44ff44;
+            font-weight: bold;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .buy-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .info-card {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .info-card h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .logs-section {
+            margin-top: 20px;
+        }
+
+        .logs-container {
+            background: #1e1e1e;
+            color: #0f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+
+        .admin-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .orders-list {
+            margin-top: 15px;
+        }
+
+        .order-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+
+        .order-item.paid {
+            border-left-color: #44ff44;
+            background: #f0fff0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Warning Banner -->
+        <div class="warning-banner">
+            🔓 SECURITY MODE OFF - EDUCATIONAL DEMO ONLY 🔓
+        </div>
+
+        <!-- Security Toggle -->
+        <div class="security-toggle">
+            <div class="security-status">
+                <div class="status-indicator insecure" id="statusIndicator"></div>
+                <span id="securityModeText">Insecure Mode (Vulnerable)</span>
+            </div>
+            <button class="toggle-btn" onclick="toggleSecurity()">Toggle Security</button>
+        </div>
+
+        <!-- Product Card -->
+        <div class="card product-card">
+            <div class="product-icon">🎓</div>
+            <h1>Premium Cybersecurity Course</h1>
+            <p style="color: #666; margin: 10px 0;">Master API Security & Webhook Integration</p>
+            
+            <div class="price">₹999</div>
+
+            <ul class="features">
+                <li>50+ hours of premium content</li>
+                <li>Real-world security scenarios</li>
+                <li>Certificate of completion</li>
+                <li>Lifetime access to materials</li>
+                <li>Expert instructor support</li>
+            </ul>
+
+            <button class="buy-btn" onclick="createOrder()" id="buyBtn">
+                Buy Now 🛒
+            </button>
+        </div>
+
+        <!-- Educational Info -->
+        <div class="card info-card">
+            <h3>🎓 Educational Purpose</h3>
+            <p>
+                This is a <strong>demonstration website</strong> showing how webhook vulnerabilities work. 
+                The payment system is intentionally insecure to teach security concepts. 
+                You can exploit it using tools like Postman or curl to send fake payment confirmations.
+            </p>
+        </div>
+
+        <!-- Webhook Logs -->
+        <div class="card logs-section">
+            <h2>📝 Recent Webhook Activity</h2>
+            <button class="toggle-btn" onclick="refreshLogs()" style="margin: 10px 0;">Refresh Logs</button>
+            <div class="logs-container" id="logsContainer">
+                <div class="loading">No webhook activity yet...</div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div class="admin-section">
+            <h2>👨‍💼 Admin Panel - All Orders</h2>
+            <button class="toggle-btn" onclick="refreshOrders()" style="margin: 10px 0;">Refresh Orders</button>
+            <div class="orders-list" id="ordersList">
+                <div class="loading">No orders yet...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check security mode on load
+        window.addEventListener('load', () => {
+            checkSecurityStatus();
+            refreshLogs();
+            refreshOrders();
+        });
+
+        async function checkSecurityStatus() {
+            try {
+                const response = await fetch('/api/security-status');
+                const data = await response.json();
+                updateSecurityUI(data.secureMode);
+            } catch (error) {
+                console.error('Error checking security status:', error);
+            }
+        }
+
+        function updateSecurityUI(isSecure) {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('securityModeText');
+            const banner = document.querySelector('.warning-banner');
+
+            if (isSecure) {
+                indicator.className = 'status-indicator secure';
+                text.textContent = 'Secure Mode (Protected)';
+                banner.style.background = '#44ff44';
+                banner.style.color = '#000';
+                banner.textContent = '🔒 SECURITY MODE ON - WEBHOOKS VERIFIED 🔒';
+            } else {
+                indicator.className = 'status-indicator insecure';
+                text.textContent = 'Insecure Mode (Vulnerable)';
+                banner.style.background = '#ff4444';
+                banner.style.color = '#fff';
+                banner.textContent = '🔓 SECURITY MODE OFF - EDUCATIONAL DEMO ONLY 🔓';
+            }
+        }
+
+        async function toggleSecurity() {
+            try {
+                const response = await fetch('/api/toggle-security', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                updateSecurityUI(data.secureMode);
+                
+                alert(data.secureMode 
+                    ? '🔒 Security Mode ENABLED!\n\nWebhooks now require:\n- Valid HMAC signature\n- Order validation\n- Proper authentication'
+                    : '🔓 Security Mode DISABLED!\n\nWebhooks are now vulnerable:\n- No signature verification\n- Blind trust in requests\n- Anyone can send fake payments'
+                );
+            } catch (error) {
+                console.error('Error toggling security:', error);
+            }
+        }
+
+        async function createOrder() {
+            const buyBtn = document.getElementById('buyBtn');
+            buyBtn.disabled = true;
+            buyBtn.textContent = 'Creating Order...';
+
+            try {
+                const response = await fetch('/api/create-order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`✅ Order Created!\n\nOrder ID: ${data.order_id}\n\nYou will now be redirected to the payment page.\n\n💡 TIP: Copy this Order ID to exploit the webhook later!`);
+                    window.location.href = data.redirect_url;
+                } else {
+                    alert('❌ Failed to create order');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error creating order');
+            } finally {
+                buyBtn.disabled = false;
+                buyBtn.textContent = 'Buy Now 🛒';
+            }
+        }
+
+        async function refreshLogs() {
+            try {
+                const response = await fetch('/api/webhook-logs');
+                const data = await response.json();
+                
+                const container = document.getElementById('logsContainer');
+                
+                if (data.logs.length === 0) {
+                    container.innerHTML = '<div class="loading">No webhook activity yet...</div>';
+                    return;
+                }
+
+                container.innerHTML = data.logs.reverse().map(log => `
+                    <div class="log-entry">
+                        <div style="color: #0ff;">[${log.timestamp}] [${log.mode}]</div>
+                        <div style="color: #ff0;">${JSON.stringify(log.data, null, 2)}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching logs:', error);
+            }
+        }
+
+        async function refreshOrders() {
+            try {
+                const response = await fetch('/api/all-orders');
+                const data = await response.json();
+                
+                const container = document.getElementById('ordersList');
+                
+                if (data.orders.length === 0) {
+                    container.innerHTML = '<div class="loading">No orders yet...</div>';
+                    return;
+                }
+
+                container.innerHTML = data.orders.map(order => `
+                    <div class="order-item ${order.status === 'PAID' ? 'paid' : ''}">
+                        <strong>Order ID:</strong> ${order.order_id}<br>
+                        <strong>Product:</strong> ${order.product}<br>
+                        <strong>Amount:</strong> ₹${order.amount}<br>
+                        <strong>Status:</strong> <span style="color: ${order.status === 'PAID' ? 'green' : 'orange'}; font-weight: bold;">${order.status}</span><br>
+                        <strong>Created:</strong> ${new Date(order.created_at).toLocaleString()}
+                        ${order.paid_at ? `<br><strong>Paid:</strong> ${new Date(order.paid_at).toLocaleString()}` : ''}
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+            }
+        }
+
+        // Auto-refresh logs and orders every 3 seconds
+        setInterval(() => {
+            refreshLogs();
+            refreshOrders();
+        }, 3000);
+    </script>
+</body>
+</html>

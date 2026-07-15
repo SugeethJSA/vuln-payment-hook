@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #44ff44 0%, #44aa44 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 50px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .order-summary div {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .premium-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .premium-content h2 {
+            margin-bottom: 15px;
+        }
+
+        .premium-content .secret-code {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            margin: 15px 0;
+            letter-spacing: 2px;
+        }
+
+        .premium-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .premium-link {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .premium-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .vulnerability-explained {
+            background: #ff4444;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .vulnerability-explained h3 {
+            margin-bottom: 15px;
+        }
+
+        .vulnerability-explained ol {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .vulnerability-explained li {
+            margin: 10px 0;
+        }
+
+        .security-lessons {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .security-lessons h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .security-lessons ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .security-lessons li {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .security-lessons strong {
+            color: #667eea;
+        }
+
+        .home-btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 40px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 30px;
+            transition: all 0.3s;
+        }
+
+        .home-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .legitimate-badge {
+            display: inline-block;
+            background: #44ff44;
+            color: #155724;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .fraudulent-badge {
+            display: inline-block;
+            background: #ff4444;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="success-icon">🎉</div>
+            
+            <h1>Payment Successful!</h1>
+            <p class="subtitle">Thank you for your purchase</p>
+
+            <div class="order-summary">
+                <div>
+                    <span><strong>Order ID:</strong></span>
+                    <span id="orderId">Loading...</span>
+                </div>
+                <div>
+                    <span><strong>Product:</strong></span>
+                    <span>Premium Cybersecurity Course</span>
+                </div>
+                <div>
+                    <span><strong>Amount Paid:</strong></span>
+                    <span>₹999</span>
+                </div>
+                <div>
+                    <span><strong>Status:</strong></span>
+                    <span style="color: green; font-weight: bold;">PAID ✅</span>
+                </div>
+                <div id="paymentMethod">
+                    <span><strong>Payment Method:</strong></span>
+                    <span id="methodBadge">Checking...</span>
+                </div>
+            </div>
+
+            <div class="premium-content">
+                <h2>🔓 Premium Content Unlocked!</h2>
+                <p>You now have access to all exclusive materials</p>
+                
+                <div class="secret-code">
+                    🔑 SECRET CODE: CYBER-MASTER-2026
+                </div>
+
+                <div class="premium-links">
+                    <div class="premium-link">📚 Course Modules</div>
+                    <div class="premium-link">🎬 Video Lessons</div>
+                    <div class="premium-link">📝 Practice Labs</div>
+                    <div class="premium-link">🏆 Certificate</div>
+                </div>
+            </div>
+
+            <div class="vulnerability-explained">
+                <h3>🚨 What Just Happened?</h3>
+                <p style="margin-bottom: 15px;">
+                    If you unlocked this content by exploiting the webhook, here's what occurred:
+                </p>
+                <ol>
+                    <li><strong>Created Order:</strong> The system generated a PENDING order</li>
+                    <li><strong>Skipped Payment:</strong> You never actually paid anything</li>
+                    <li><strong>Sent Fake Webhook:</strong> You manually called the webhook endpoint</li>
+                    <li><strong>Blindly Trusted:</strong> The server accepted your request without verification</li>
+                    <li><strong>Unlocked Content:</strong> Premium content was granted without payment</li>
+                </ol>
+                <p style="margin-top: 15px; font-weight: bold;">
+                    🎯 Result: You got ₹999 worth of content for FREE by exploiting a vulnerability!
+                </p>
+            </div>
+
+            <div class="security-lessons">
+                <h3>🛡️ How to Prevent This Attack</h3>
+                <ul>
+                    <li>
+                        <strong>HMAC Signature Verification:</strong> 
+                        Use cryptographic signatures to verify webhook authenticity
+                    </li>
+                    <li>
+                        <strong>Shared Secret Keys:</strong> 
+                        Only accept webhooks with valid secret tokens
+                    </li>
+                    <li>
+                        <strong>IP Whitelisting:</strong> 
+                        Only accept webhooks from known payment gateway IPs
+                    </li>
+                    <li>
+                        <strong>Idempotency Checks:</strong> 
+                        Prevent duplicate payment confirmations for the same order
+                    </li>
+                    <li>
+                        <strong>Amount Validation:</strong> 
+                        Verify the payment amount matches the order
+                    </li>
+                    <li>
+                        <strong>Payment Gateway Confirmation:</strong> 
+                        Query the payment gateway directly to confirm transactions
+                    </li>
+                </ul>
+            </div>
+
+            <a href="/" class="home-btn">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Get order ID from URL
+        const pathParts = window.location.pathname.split('/');
+        const orderId = pathParts[pathParts.length - 1];
+
+        // Display order ID
+        document.getElementById('orderId').textContent = orderId;
+
+        // Fetch order details to determine if it was legitimate or fraudulent
+        async function checkPaymentMethod() {
+            try {
+                const response = await fetch(`/api/order/${orderId}`);
+                const data = await response.json();
+
+                const methodElement = document.getElementById('methodBadge');
+                
+                // In this demo, we can't truly distinguish, but we can check timing
+                const created = new Date(data.created_at);
+                const paid = new Date(data.paid_at);
+                const timeDiff = (paid - created) / 1000; // seconds
+
+                if (timeDiff < 5) {
+                    // Likely exploited (paid too quickly)
+                    methodElement.innerHTML = '<span class="fraudulent-badge">⚠️ WEBHOOK EXPLOIT</span>';
+                } else {
+                    // Took normal time (possibly legitimate)
+                    methodElement.innerHTML = '<span class="legitimate-badge">✅ Normal Flow</span>';
+                }
+
+                console.log('Payment details:', data);
+                console.log('Time difference:', timeDiff, 'seconds');
+            } catch (error) {
+                console.error('Error fetching order:', error);
+                document.getElementById('methodBadge').textContent = 'Unknown';
+            }
+        }
+
+        // Check payment method on load
+        checkPaymentMethod();
+    </script>
+</body>
+</html>

