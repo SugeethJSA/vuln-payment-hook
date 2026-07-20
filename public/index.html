@@ -1,453 +1,752 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vulnerable Webhook Demo - Educational</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlipZon – India's Favourite Shopping Destination</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f1f3f6; color: #212121; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    /* ── HEADER ──────────────────────────────────────────────── */
+    .fz-header {
+      background: #0f3460;
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+    .fz-header-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 24px;
+    }
+    .fz-logo {
+      font-size: 26px;
+      font-weight: 900;
+      color: #e94560;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+    .fz-logo span { color: #fff; font-weight: 400; font-size: 13px; display: block; margin-top: -4px; letter-spacing: 0; }
+    .fz-search-wrap {
+      flex: 1;
+      display: flex;
+      max-width: 680px;
+    }
+    .fz-search-wrap input {
+      flex: 1;
+      padding: 10px 14px;
+      font-size: 15px;
+      border: none;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .fz-search-wrap button {
+      background: #e94560;
+      color: #fff;
+      border: none;
+      padding: 0 18px;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background .2s;
+    }
+    .fz-search-wrap button:hover { background: #c73652; }
+    .fz-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .fz-action-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .4px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background .2s;
+      position: relative;
+    }
+    .fz-action-btn:hover { background: rgba(255,255,255,0.08); }
+    .fz-action-btn svg { width: 22px; height: 22px; }
+    .fz-cart-count {
+      position: absolute;
+      top: -2px; right: 2px;
+      background: #e94560;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* Staff console toggle button */
+    .fz-staff-btn {
+      background: rgba(233,69,96,0.18);
+      border: 1px solid rgba(233,69,96,0.4);
+      color: #e94560;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      letter-spacing: .5px;
+      transition: all .2s;
+    }
+    .fz-staff-btn:hover { background: rgba(233,69,96,0.35); }
+    .fz-nav-strip {
+      background: #16213e;
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .fz-nav-strip a {
+      color: rgba(255,255,255,0.82);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 16px;
+      display: block;
+      white-space: nowrap;
+      transition: color .2s;
+    }
+    .fz-nav-strip a:hover { color: #e94560; }
 
-        .warning-banner {
-            background: #ff4444;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            animation: pulse 2s infinite;
-        }
+    /* ── HERO BANNER ─────────────────────────────────────────── */
+    .fz-hero {
+      background: linear-gradient(120deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+      padding: 44px 24px;
+      text-align: center;
+      color: #fff;
+    }
+    .fz-hero h1 { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
+    .fz-hero h1 span { color: #e94560; }
+    .fz-hero p { font-size: 15px; color: rgba(255,255,255,0.72); margin-bottom: 22px; }
+    .fz-hero-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .fz-hero-tag {
+      background: rgba(233,69,96,0.18);
+      border: 1px solid rgba(233,69,96,0.4);
+      color: #e94560;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
+    /* ── SECTION LABEL ───────────────────────────────────────── */
+    .fz-section { max-width: 1280px; margin: 0 auto; padding: 28px 20px; }
+    .fz-section-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f3460;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .fz-section-title::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, #e94560 0%, transparent 100%);
+      border-radius: 2px;
+      margin-left: 10px;
+    }
 
-        .security-toggle {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    /* ── PRODUCT GRID ────────────────────────────────────────── */
+    .fz-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 1024px) { .fz-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 720px) { .fz-grid { grid-template-columns: repeat(2, 1fr); } }
 
-        .security-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .fz-product-card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      transition: box-shadow .25s, transform .25s;
+      display: flex;
+      flex-direction: column;
+    }
+    .fz-product-card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+      transform: translateY(-3px);
+    }
+    .fz-product-img {
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8ecf8 100%);
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+    }
+    .fz-product-body { padding: 14px; flex: 1; display: flex; flex-direction: column; }
+    .fz-product-brand { font-size: 11px; color: #e94560; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: .5px; }
+    .fz-product-name { font-size: 14px; font-weight: 700; color: #212121; margin-bottom: 6px; line-height: 1.35; }
+    .fz-product-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+    .fz-stars { background: #388e3c; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+    .fz-rating-count { font-size: 11px; color: #878787; }
+    .fz-price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .fz-price { font-size: 20px; font-weight: 900; color: #212121; }
+    .fz-price-original { font-size: 13px; color: #878787; text-decoration: line-through; }
+    .fz-discount { font-size: 13px; color: #388e3c; font-weight: 700; }
+    .fz-product-tag { font-size: 11px; color: #878787; margin-bottom: 12px; }
+    .fz-btn-buy {
+      margin-top: auto;
+      background: #0f3460;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .fz-btn-buy:hover { background: #0a2447; }
+    .fz-btn-buy:disabled { opacity: .6; cursor: not-allowed; }
 
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            animation: blink 1.5s infinite;
-        }
+    /* ── OFFERS BANNER ───────────────────────────────────────── */
+    .fz-offers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 20px 24px;
+    }
+    @media (max-width: 720px) { .fz-offers { grid-template-columns: 1fr; } }
+    .fz-offer-card {
+      border-radius: 8px;
+      padding: 18px 20px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .fz-offer-card h3 { font-size: 16px; margin-bottom: 4px; }
+    .fz-offer-card.blue  { background: linear-gradient(120deg,#0f3460,#1e5fa8); }
+    .fz-offer-card.red   { background: linear-gradient(120deg,#c73652,#e94560); }
+    .fz-offer-card.dark  { background: linear-gradient(120deg,#1a1a2e,#16213e); }
 
-        .status-indicator.insecure {
-            background: #ff4444;
-        }
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    .fz-footer {
+      background: #0f3460;
+      color: rgba(255,255,255,0.65);
+      text-align: center;
+      font-size: 12px;
+      padding: 22px 24px;
+      margin-top: 20px;
+    }
+    .fz-footer a { color: #e94560; text-decoration: none; }
 
-        .status-indicator.secure {
-            background: #44ff44;
-        }
+    /* ══════════════════════════════════════════════════════════
+       STAFF OPERATIONS & SECURITY CONSOLE (hidden slider)
+    ══════════════════════════════════════════════════════════ */
+    .staff-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 2000;
+      display: none;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+    .staff-overlay.open { display: flex; }
+    .staff-panel {
+      background: #1a1a2e;
+      width: min(540px, 100vw);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.5);
+      animation: slideIn .28s ease;
+    }
+    @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    .staff-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 22px;
+      background: #16213e;
+      border-bottom: 1px solid rgba(233,69,96,0.3);
+    }
+    .staff-header h2 { color: #e94560; font-size: 15px; font-weight: 800; letter-spacing: .5px; }
+    .staff-close {
+      background: none;
+      border: 1px solid rgba(233,69,96,0.4);
+      color: #e94560;
+      font-size: 18px;
+      width: 32px; height: 32px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
 
-        @keyframes blink {
-            0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0.5; }
-        }
+    /* Security mode strip */
+    .staff-mode-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 22px;
+      background: #0f3460;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .staff-mode-label { color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+    .dot.red { background: #e94560; }
+    .dot.green { background: #4ade80; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .staff-toggle-btn {
+      background: #e94560;
+      color: #fff;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .5px;
+      transition: background .2s;
+    }
+    .staff-toggle-btn:hover { background: #c73652; }
 
-        .toggle-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
+    .staff-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .staff-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+      letter-spacing: .4px;
+    }
+    .staff-tab.active { color: #e94560; border-bottom-color: #e94560; }
 
-        .toggle-btn:hover {
-            background: #5568d3;
-            transform: scale(1.05);
-        }
+    .staff-body { flex: 1; overflow-y: auto; padding: 16px 22px; }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+    /* Logs console */
+    .logs-terminal {
+      background: #0a0a0a;
+      border: 1px solid rgba(233,69,96,0.2);
+      border-radius: 6px;
+      padding: 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      max-height: 320px;
+      overflow-y: auto;
+      color: #4ade80;
+    }
+    .log-entry { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .log-ts { color: #60a5fa; }
+    .log-mode { color: #f59e0b; }
+    .log-data { color: #d1d5db; margin-top: 2px; word-break: break-all; }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-        }
+    /* Orders table */
+    .orders-table { width: 100%; border-collapse: collapse; font-size: 12px; color: rgba(255,255,255,0.85); }
+    .orders-table th {
+      background: #0f3460;
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 11px;
+      letter-spacing: .5px;
+      color: #e94560;
+      font-weight: 700;
+    }
+    .orders-table td { padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .orders-table tr:hover td { background: rgba(255,255,255,0.04); }
+    .badge {
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .badge.paid { background: rgba(74,222,128,0.18); color: #4ade80; }
+    .badge.pending { background: rgba(251,191,36,0.18); color: #fbbf24; }
 
-        .product-card {
-            text-align: center;
-        }
+    .staff-refresh-btn {
+      background: rgba(233,69,96,0.12);
+      border: 1px solid rgba(233,69,96,0.3);
+      color: #e94560;
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: background .2s;
+    }
+    .staff-refresh-btn:hover { background: rgba(233,69,96,0.25); }
 
-        .product-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .price {
-            font-size: 48px;
-            color: #667eea;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .features {
-            text-align: left;
-            margin: 30px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-
-        .features li {
-            margin: 10px 0;
-            padding-left: 25px;
-            position: relative;
-        }
-
-        .features li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #44ff44;
-            font-weight: bold;
-        }
-
-        .buy-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 18px 60px;
-            font-size: 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .buy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .buy-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .info-card {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .info-card h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .info-card p {
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .logs-section {
-            margin-top: 20px;
-        }
-
-        .logs-container {
-            background: #1e1e1e;
-            color: #0f0;
-            padding: 20px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .log-entry {
-            margin-bottom: 10px;
-            padding: 5px;
-            border-bottom: 1px solid #333;
-        }
-
-        .admin-section {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .orders-list {
-            margin-top: 15px;
-        }
-
-        .order-item {
-            background: #f8f9fa;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
-        }
-
-        .order-item.paid {
-            border-left-color: #44ff44;
-            background: #f0fff0;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-
-        code {
-            background: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-        }
-    </style>
+    .empty-state { color: rgba(255,255,255,0.35); font-size: 13px; text-align: center; padding: 32px 0; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Warning Banner -->
-        <div class="warning-banner">
-            🔓 SECURITY MODE OFF - EDUCATIONAL DEMO ONLY 🔓
-        </div>
 
-        <!-- Security Toggle -->
-        <div class="security-toggle">
-            <div class="security-status">
-                <div class="status-indicator insecure" id="statusIndicator"></div>
-                <span id="securityModeText">Insecure Mode (Vulnerable)</span>
-            </div>
-            <button class="toggle-btn" onclick="toggleSecurity()">Toggle Security</button>
-        </div>
+  <!-- ══ GLOBAL HEADER ══════════════════════════════════════════ -->
+  <header class="fz-header">
+    <div class="fz-header-top">
+      <a href="/" class="fz-logo">FlipZon<span>Explore. Shop. Save.</span></a>
 
-        <!-- Product Card -->
-        <div class="card product-card">
-            <div class="product-icon">🎓</div>
-            <h1>Premium Cybersecurity Course</h1>
-            <p style="color: #666; margin: 10px 0;">Master API Security & Webhook Integration</p>
-            
-            <div class="price">₹999</div>
+      <div class="fz-search-wrap">
+        <input type="text" id="searchInput" placeholder="Search for products, brands and more…" autocomplete="off">
+        <button aria-label="Search">&#128269;</button>
+      </div>
 
-            <ul class="features">
-                <li>50+ hours of premium content</li>
-                <li>Real-world security scenarios</li>
-                <li>Certificate of completion</li>
-                <li>Lifetime access to materials</li>
-                <li>Expert instructor support</li>
-            </ul>
-
-            <button class="buy-btn" onclick="createOrder()" id="buyBtn">
-                Buy Now 🛒
-            </button>
-        </div>
-
-        <!-- Educational Info -->
-        <div class="card info-card">
-            <h3>🎓 Educational Purpose</h3>
-            <p>
-                This is a <strong>demonstration website</strong> showing how webhook vulnerabilities work. 
-                The payment system is intentionally insecure to teach security concepts. 
-                You can exploit it using tools like Postman or curl to send fake payment confirmations.
-            </p>
-        </div>
-
-        <!-- Webhook Logs -->
-        <div class="card logs-section">
-            <h2>📝 Recent Webhook Activity</h2>
-            <button class="toggle-btn" onclick="refreshLogs()" style="margin: 10px 0;">Refresh Logs</button>
-            <div class="logs-container" id="logsContainer">
-                <div class="loading">No webhook activity yet...</div>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div class="admin-section">
-            <h2>👨‍💼 Admin Panel - All Orders</h2>
-            <button class="toggle-btn" onclick="refreshOrders()" style="margin: 10px 0;">Refresh Orders</button>
-            <div class="orders-list" id="ordersList">
-                <div class="loading">No orders yet...</div>
-            </div>
-        </div>
+      <div class="fz-header-actions">
+        <!-- Cart button with live count -->
+        <button class="fz-action-btn" aria-label="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span>Cart</span>
+          <span class="fz-cart-count" id="cartCount">0</span>
+        </button>
+        <!-- Account -->
+        <button class="fz-action-btn" aria-label="My Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Account</span>
+        </button>
+        <!-- Staff console toggle -->
+        <button class="fz-staff-btn" id="staffToggleBtn" onclick="openStaffConsole()" aria-label="Staff Console">
+          ⚙ Staff
+        </button>
+      </div>
     </div>
+    <nav class="fz-nav-strip">
+      <a href="#">Electronics</a>
+      <a href="#">Fashion</a>
+      <a href="#">Cybersec Gear</a>
+      <a href="#">Home & Kitchen</a>
+      <a href="#">Books</a>
+      <a href="#">Offers</a>
+      <a href="#">FlipZon Pay</a>
+    </nav>
+  </header>
 
-    <script>
-        // Check security mode on load
-        window.addEventListener('load', () => {
-            checkSecurityStatus();
-            refreshLogs();
-            refreshOrders();
-        });
+  <!-- ══ HERO BANNER ════════════════════════════════════════════ -->
+  <div class="fz-hero">
+    <h1>Welcome to <span>FlipZon</span></h1>
+    <p>Millions of products. Fast delivery. Unbeatable prices.</p>
+    <div class="fz-hero-tags">
+      <span class="fz-hero-tag">🚚 Free Delivery on ₹499+</span>
+      <span class="fz-hero-tag">🔒 Secure Payments</span>
+      <span class="fz-hero-tag">↩ 10-Day Easy Returns</span>
+      <span class="fz-hero-tag">⭐ Authentic Products</span>
+    </div>
+  </div>
 
-        async function checkSecurityStatus() {
-            try {
-                const response = await fetch('/api/security-status');
-                const data = await response.json();
-                updateSecurityUI(data.secureMode);
-            } catch (error) {
-                console.error('Error checking security status:', error);
-            }
+  <!-- ══ PRODUCT GRID ═══════════════════════════════════════════ -->
+  <section class="fz-section">
+    <div class="fz-section-title">🔥 Top Picks For You</div>
+    <div class="fz-grid" id="productGrid">
+
+      <!-- Card 1 -->
+      <div class="fz-product-card">
+        <div class="fz-product-img">🧥</div>
+        <div class="fz-product-body">
+          <div class="fz-product-brand">CYSCOM Originals</div>
+          <div class="fz-product-name">Cyber-Ops Tech Hoodie — Stealth Edition</div>
+          <div class="fz-product-rating">
+            <span class="fz-stars">★ 4.6</span>
+            <span class="fz-rating-count">(2,841)</span>
+          </div>
+          <div class="fz-price-row">
+            <span class="fz-price">₹1,499</span>
+            <span class="fz-price-original">₹2,499</span>
+            <span class="fz-discount">40% off</span>
+          </div>
+          <div class="fz-product-tag">Free delivery by Tomorrow</div>
+          <button class="fz-btn-buy" onclick="createOrder('CYSCOM Cyber-Ops Tech Hoodie', 1499, this)">Buy Now 🛒</button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="fz-product-card">
+        <div class="fz-product-img">📡</div>
+        <div class="fz-product-body">
+          <div class="fz-product-brand">NetInject Labs</div>
+          <div class="fz-product-name">Long-Range Network Injection Card — 802.11ac</div>
+          <div class="fz-product-rating">
+            <span class="fz-stars">★ 4.4</span>
+            <span class="fz-rating-count">(1,109)</span>
+          </div>
+          <div class="fz-price-row">
+            <span class="fz-price">₹3,200</span>
+            <span class="fz-price-original">₹4,500</span>
+            <span class="fz-discount">29% off</span>
+          </div>
+          <div class="fz-product-tag">In Stock — Ships in 2 days</div>
+          <button class="fz-btn-buy" onclick="createOrder('Long-Range Network Injection Card', 3200, this)">Buy Now 🛒</button>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="fz-product-card">
+        <div class="fz-product-img">💼</div>
+        <div class="fz-product-body">
+          <div class="fz-product-brand">TactiGear</div>
+          <div class="fz-product-name">Tactical Hardware Carry Sleeve — 15.6"</div>
+          <div class="fz-product-rating">
+            <span class="fz-stars">★ 4.7</span>
+            <span class="fz-rating-count">(5,302)</span>
+          </div>
+          <div class="fz-price-row">
+            <span class="fz-price">₹899</span>
+            <span class="fz-price-original">₹1,299</span>
+            <span class="fz-discount">31% off</span>
+          </div>
+          <div class="fz-product-tag">Free delivery by Tomorrow</div>
+          <button class="fz-btn-buy" onclick="createOrder('Tactical Hardware Carry Sleeve', 899, this)">Buy Now 🛒</button>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="fz-product-card">
+        <div class="fz-product-img">🔑</div>
+        <div class="fz-product-body">
+          <div class="fz-product-brand">CryptoKey Pro</div>
+          <div class="fz-product-name">Hardware Security Key — FIDO2 / NFC</div>
+          <div class="fz-product-rating">
+            <span class="fz-stars">★ 4.8</span>
+            <span class="fz-rating-count">(988)</span>
+          </div>
+          <div class="fz-price-row">
+            <span class="fz-price">₹2,149</span>
+            <span class="fz-price-original">₹2,799</span>
+            <span class="fz-discount">23% off</span>
+          </div>
+          <div class="fz-product-tag">Limited Stock — Only 12 left</div>
+          <button class="fz-btn-buy" onclick="createOrder('Hardware Security Key FIDO2', 2149, this)">Buy Now 🛒</button>
+        </div>
+      </div>
+
+    </div><!-- /fz-grid -->
+  </section>
+
+  <!-- ══ OFFER BANNERS ══════════════════════════════════════════ -->
+  <div class="fz-offers">
+    <div class="fz-offer-card blue">
+      <h3>🚀 Flash Sale — Ends Tonight</h3>
+      <p>Up to 70% off on Cybersec Accessories. No coupon needed.</p>
+    </div>
+    <div class="fz-offer-card red">
+      <h3>💳 FlipZon Pay Cashback</h3>
+      <p>Get 10% cashback up to ₹200 on first transaction via FlipZon Pay.</p>
+    </div>
+    <div class="fz-offer-card dark">
+      <h3>📦 Free 2-Day Delivery</h3>
+      <p>Subscribe to FlipZon Plus and never pay for delivery again.</p>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ═════════════════════════════════════════════════ -->
+  <footer class="fz-footer">
+    <p>© 2026 FlipZon Internet Pvt. Ltd. | <a href="#">Terms</a> · <a href="#">Privacy</a> · <a href="#">Help</a></p>
+    <p style="margin-top:6px;">Registered address: FlipZon Towers, Whitefield, Bengaluru – 560066</p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════════════
+       STAFF OPERATIONS & SECURITY CONSOLE (hidden side-panel)
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="staff-overlay" id="staffOverlay" onclick="handleOverlayClick(event)">
+    <div class="staff-panel">
+      <div class="staff-header">
+        <h2>⚙ Staff Operations &amp; Security Console</h2>
+        <button class="staff-close" onclick="closeStaffConsole()">✕</button>
+      </div>
+
+      <!-- Security Mode Toggle -->
+      <div class="staff-mode-strip">
+        <div class="staff-mode-label">
+          <span class="dot" id="staffDot"></span>
+          <span id="staffModeText">Loading…</span>
+        </div>
+        <button class="staff-toggle-btn" onclick="toggleSecurity()">Toggle Security</button>
+      </div>
+
+      <!-- Sub-tabs -->
+      <div class="staff-tabs">
+        <button class="staff-tab active" data-tab="logs" onclick="switchTab('logs', this)">WEBHOOK LOGS</button>
+        <button class="staff-tab" data-tab="orders" onclick="switchTab('orders', this)">ALL ORDERS</button>
+      </div>
+
+      <div class="staff-body">
+        <!-- Logs Tab -->
+        <div id="tab-logs">
+          <button class="staff-refresh-btn" onclick="refreshLogs()">⟳ Refresh Logs</button>
+          <div class="logs-terminal" id="logsContainer">
+            <div class="empty-state">No webhook activity yet…</div>
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="tab-orders" style="display:none;">
+          <button class="staff-refresh-btn" onclick="refreshOrders()">⟳ Refresh Orders</button>
+          <table class="orders-table">
+            <thead><tr><th>Order ID</th><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="ordersList"><tr><td colspan="4" class="empty-state">No orders yet…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Cart counter (visual only) ─────────────────────────── */
+    let cartCount = 0;
+    function bumpCart() {
+      cartCount++;
+      document.getElementById('cartCount').textContent = cartCount;
+    }
+
+    /* ── Staff Console open/close ─────────────────────────── */
+    function openStaffConsole() {
+      document.getElementById('staffOverlay').classList.add('open');
+      checkSecurityStatus();
+      refreshLogs();
+      refreshOrders();
+    }
+    function closeStaffConsole() {
+      document.getElementById('staffOverlay').classList.remove('open');
+    }
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('staffOverlay')) closeStaffConsole();
+    }
+
+    /* ── Staff sub-tab switch ─────────────────────────────── */
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.staff-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-logs').style.display   = tab === 'logs'   ? '' : 'none';
+      document.getElementById('tab-orders').style.display = tab === 'orders' ? '' : 'none';
+    }
+
+    /* ── Security status ─────────────────────────────────── */
+    async function checkSecurityStatus() {
+      try {
+        const data = await fetch('/api/security-status').then(r => r.json());
+        updateSecurityUI(data.secureMode);
+      } catch (_) {}
+    }
+
+    function updateSecurityUI(isSecure) {
+      const dot  = document.getElementById('staffDot');
+      const text = document.getElementById('staffModeText');
+      if (isSecure) {
+        dot.className  = 'dot green';
+        text.textContent = 'SECURE MODE — Webhook signatures enforced';
+      } else {
+        dot.className  = 'dot red';
+        text.textContent = 'INSECURE MODE — No signature verification';
+      }
+    }
+
+    async function toggleSecurity() {
+      try {
+        const data = await fetch('/api/toggle-security', { method: 'POST' }).then(r => r.json());
+        updateSecurityUI(data.secureMode);
+      } catch (_) {}
+    }
+
+    /* ── Create order (Buy Now) ───────────────────────────── */
+    async function createOrder(productName, amount, btn) {
+      btn.disabled = true;
+      btn.textContent = 'Processing…';
+      try {
+        const data = await fetch('/api/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }).then(r => r.json());
+
+        if (data.success) {
+          bumpCart();
+          window.location.href = data.redirect_url;
+        } else {
+          alert('Unable to place order. Please try again.');
         }
+      } catch (_) {
+        alert('Network error. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Buy Now 🛒';
+      }
+    }
 
-        function updateSecurityUI(isSecure) {
-            const indicator = document.getElementById('statusIndicator');
-            const text = document.getElementById('securityModeText');
-            const banner = document.querySelector('.warning-banner');
-
-            if (isSecure) {
-                indicator.className = 'status-indicator secure';
-                text.textContent = 'Secure Mode (Protected)';
-                banner.style.background = '#44ff44';
-                banner.style.color = '#000';
-                banner.textContent = '🔒 SECURITY MODE ON - WEBHOOKS VERIFIED 🔒';
-            } else {
-                indicator.className = 'status-indicator insecure';
-                text.textContent = 'Insecure Mode (Vulnerable)';
-                banner.style.background = '#ff4444';
-                banner.style.color = '#fff';
-                banner.textContent = '🔓 SECURITY MODE OFF - EDUCATIONAL DEMO ONLY 🔓';
-            }
+    /* ── Webhook logs ─────────────────────────────────────── */
+    async function refreshLogs() {
+      try {
+        const data = await fetch('/api/webhook-logs').then(r => r.json());
+        const el = document.getElementById('logsContainer');
+        if (!data.logs.length) {
+          el.innerHTML = '<div class="empty-state">No webhook activity yet…</div>';
+          return;
         }
+        el.innerHTML = [...data.logs].reverse().map(log => `
+          <div class="log-entry">
+            <span class="log-ts">[${log.timestamp}]</span>
+            <span class="log-mode"> [${log.mode}]</span>
+            <div class="log-data">${JSON.stringify(log.data, null, 2)}</div>
+          </div>`).join('');
+        el.scrollTop = el.scrollHeight;
+      } catch (_) {}
+    }
 
-        async function toggleSecurity() {
-            try {
-                const response = await fetch('/api/toggle-security', {
-                    method: 'POST'
-                });
-                const data = await response.json();
-                updateSecurityUI(data.secureMode);
-                
-                alert(data.secureMode 
-                    ? '🔒 Security Mode ENABLED!\n\nWebhooks now require:\n- Valid HMAC signature\n- Order validation\n- Proper authentication'
-                    : '🔓 Security Mode DISABLED!\n\nWebhooks are now vulnerable:\n- No signature verification\n- Blind trust in requests\n- Anyone can send fake payments'
-                );
-            } catch (error) {
-                console.error('Error toggling security:', error);
-            }
+    /* ── All orders ───────────────────────────────────────── */
+    async function refreshOrders() {
+      try {
+        const data = await fetch('/api/all-orders').then(r => r.json());
+        const tbody = document.getElementById('ordersList');
+        if (!data.orders.length) {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No orders yet…</td></tr>';
+          return;
         }
+        tbody.innerHTML = data.orders.map(o => `
+          <tr>
+            <td style="font-family:monospace;font-size:11px;">${o.order_id}</td>
+            <td>${o.product}</td>
+            <td>₹${o.amount}</td>
+            <td><span class="badge ${o.status === 'PAID' ? 'paid' : 'pending'}">${o.status}</span></td>
+          </tr>`).join('');
+      } catch (_) {}
+    }
 
-        async function createOrder() {
-            const buyBtn = document.getElementById('buyBtn');
-            buyBtn.disabled = true;
-            buyBtn.textContent = 'Creating Order...';
+    /* ── Auto-refresh every 3 s ───────────────────────────── */
+    setInterval(() => {
+      refreshLogs();
+      refreshOrders();
+    }, 3000);
 
-            try {
-                const response = await fetch('/api/create-order', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    alert(`✅ Order Created!\n\nOrder ID: ${data.order_id}\n\nYou will now be redirected to the payment page.\n\n💡 TIP: Copy this Order ID to exploit the webhook later!`);
-                    window.location.href = data.redirect_url;
-                } else {
-                    alert('❌ Failed to create order');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error creating order');
-            } finally {
-                buyBtn.disabled = false;
-                buyBtn.textContent = 'Buy Now 🛒';
-            }
-        }
-
-        async function refreshLogs() {
-            try {
-                const response = await fetch('/api/webhook-logs');
-                const data = await response.json();
-                
-                const container = document.getElementById('logsContainer');
-                
-                if (data.logs.length === 0) {
-                    container.innerHTML = '<div class="loading">No webhook activity yet...</div>';
-                    return;
-                }
-
-                container.innerHTML = data.logs.reverse().map(log => `
-                    <div class="log-entry">
-                        <div style="color: #0ff;">[${log.timestamp}] [${log.mode}]</div>
-                        <div style="color: #ff0;">${JSON.stringify(log.data, null, 2)}</div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error fetching logs:', error);
-            }
-        }
-
-        async function refreshOrders() {
-            try {
-                const response = await fetch('/api/all-orders');
-                const data = await response.json();
-                
-                const container = document.getElementById('ordersList');
-                
-                if (data.orders.length === 0) {
-                    container.innerHTML = '<div class="loading">No orders yet...</div>';
-                    return;
-                }
-
-                container.innerHTML = data.orders.map(order => `
-                    <div class="order-item ${order.status === 'PAID' ? 'paid' : ''}">
-                        <strong>Order ID:</strong> ${order.order_id}<br>
-                        <strong>Product:</strong> ${order.product}<br>
-                        <strong>Amount:</strong> ₹${order.amount}<br>
-                        <strong>Status:</strong> <span style="color: ${order.status === 'PAID' ? 'green' : 'orange'}; font-weight: bold;">${order.status}</span><br>
-                        <strong>Created:</strong> ${new Date(order.created_at).toLocaleString()}
-                        ${order.paid_at ? `<br><strong>Paid:</strong> ${new Date(order.paid_at).toLocaleString()}` : ''}
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-            }
-        }
-
-        // Auto-refresh logs and orders every 3 seconds
-        setInterval(() => {
-            refreshLogs();
-            refreshOrders();
-        }, 3000);
-    </script>
+    /* ── Boot ─────────────────────────────────────────────── */
+    window.addEventListener('load', () => {
+      checkSecurityStatus();
+    });
+  </script>
 </body>
 </html>

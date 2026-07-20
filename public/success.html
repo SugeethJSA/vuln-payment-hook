@@ -1,343 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Successful!</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed — FlipZon</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f1f3f6;
+      min-height: 100vh;
+      color: #212121;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #44ff44 0%, #44aa44 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    /* ── MINI HEADER ─────────────────────────────────────── */
+    .fz-header {
+      background: #0f3460;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .fz-logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: #e94560;
+      text-decoration: none;
+    }
+    .fz-logo span { color: #fff; font-weight: 400; font-size: 12px; margin-left: 6px; }
+    .fz-header-right { font-size: 12px; color: rgba(255,255,255,0.65); }
 
-        .container {
-            max-width: 700px;
-            width: 100%;
-        }
+    /* ── SUCCESS HERO ────────────────────────────────────── */
+    .fz-success-hero {
+      background: linear-gradient(120deg, #16a34a 0%, #15803d 100%);
+      padding: 36px 24px;
+      text-align: center;
+      color: #fff;
+    }
+    .fz-check-circle {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      margin: 0 auto 14px;
+      animation: popIn .5s cubic-bezier(.175,.885,.32,1.275) forwards;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .fz-success-hero h1 { font-size: 26px; font-weight: 900; margin-bottom: 6px; }
+    .fz-success-hero p { font-size: 14px; color: rgba(255,255,255,0.82); }
 
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 50px 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            text-align: center;
-        }
+    /* ── PAGE LAYOUT ─────────────────────────────────────── */
+    .fz-wrap {
+      max-width: 860px;
+      margin: 28px auto;
+      padding: 0 18px;
+    }
 
-        .success-icon {
-            font-size: 100px;
-            margin-bottom: 20px;
-            animation: bounce 1s ease;
-        }
+    /* ── CARDS ───────────────────────────────────────────── */
+    .fz-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 22px 26px;
+      margin-bottom: 18px;
+    }
+    .fz-card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f3460;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f1f3f6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+    /* ── INVOICE ─────────────────────────────────────────── */
+    .fz-invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #f1f3f6;
+    }
+    .fz-invoice-logo { font-size: 22px; font-weight: 900; color: #e94560; }
+    .fz-invoice-logo span { font-size: 11px; font-weight: 400; color: #878787; display: block; }
+    .fz-invoice-meta { text-align: right; font-size: 12px; color: #555; }
+    .fz-invoice-meta strong { font-size: 14px; color: #0f3460; display: block; }
 
-        h1 {
-            color: #155724;
-            margin-bottom: 10px;
-        }
+    .fz-invoice-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      font-size: 13px;
+      border-bottom: 1px solid #f8f9fa;
+    }
+    .fz-invoice-row:last-child { border-bottom: none; }
+    .fz-invoice-row .label { color: #878787; }
+    .fz-invoice-row .value { font-weight: 700; color: #212121; }
+    .fz-invoice-row.total-row {
+      padding-top: 14px;
+      margin-top: 6px;
+      border-top: 2px dashed #e0e0e0;
+      border-bottom: none;
+    }
+    .fz-invoice-row.total-row .label { font-size: 15px; font-weight: 800; color: #212121; }
+    .fz-invoice-row.total-row .value { font-size: 18px; font-weight: 900; color: #0f3460; }
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-        }
+    /* ── PRODUCT ITEM IN INVOICE ─────────────────────────── */
+    .fz-product-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f1f3f6;
+    }
+    .fz-product-thumb {
+      width: 58px; height: 58px;
+      background: #f0f4ff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .fz-product-info { flex: 1; }
+    .fz-product-info .name { font-size: 14px; font-weight: 700; color: #212121; }
+    .fz-product-info .sub { font-size: 11px; color: #878787; margin-top: 3px; }
+    .fz-product-price { font-size: 16px; font-weight: 900; color: #0f3460; }
 
-        .order-summary {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 25px 0;
-            text-align: left;
-        }
+    /* ── SHIPPING TIMELINE ───────────────────────────────── */
+    .fz-timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+    .fz-timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: #e0e0e0;
+    }
+    .fz-timeline-item { position: relative; margin-bottom: 18px; }
+    .fz-timeline-dot {
+      position: absolute;
+      left: -22px;
+      top: 3px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      background: #fff;
+    }
+    .fz-timeline-dot.active { border-color: #22c55e; background: #22c55e; }
+    .fz-timeline-title { font-size: 13px; font-weight: 700; color: #212121; }
+    .fz-timeline-sub { font-size: 11px; color: #878787; margin-top: 2px; }
+    .fz-timeline-eta { font-size: 11px; color: #0f3460; font-weight: 700; margin-top: 2px; }
 
-        .order-summary div {
-            margin: 10px 0;
-            display: flex;
-            justify-content: space-between;
-        }
+    /* Payment method badge */
+    .fz-method-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .fz-method-badge.legit    { background: #ecfdf5; color: #16a34a; border: 1px solid #86efac; }
+    .fz-method-badge.exploit  { background: #fff7ed; color: #ea580c; border: 1px solid #fdba74; }
 
-        .premium-content {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 8px;
-            margin: 25px 0;
-        }
+    /* ── CTA BUTTONS ─────────────────────────────────────── */
+    .fz-cta-row { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
+    .fz-btn-primary {
+      background: #0f3460;
+      color: #fff;
+      padding: 11px 24px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .2s;
+      display: inline-block;
+    }
+    .fz-btn-primary:hover { background: #0a2447; }
+    .fz-btn-secondary {
+      background: #f1f3f6;
+      color: #0f3460;
+      padding: 11px 24px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .2s;
+      display: inline-block;
+      border: 1px solid #d0d0d0;
+    }
+    .fz-btn-secondary:hover { background: #e4e7eb; }
 
-        .premium-content h2 {
-            margin-bottom: 15px;
-        }
+    /* ── ASSESSMENT ACCORDION ────────────────────────────── */
+    .fz-assessment-wrap {
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .fz-assessment-toggle {
+      width: 100%;
+      background: #f8f9fa;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #555;
+      cursor: pointer;
+      text-align: left;
+      transition: background .2s;
+    }
+    .fz-assessment-toggle:hover { background: #eef0f3; }
+    .fz-assessment-toggle .arr { transition: transform .25s; font-size: 11px; }
+    .fz-assessment-toggle.open .arr { transform: rotate(180deg); }
+    .fz-assessment-body {
+      display: none;
+      padding: 20px 22px;
+      background: #fff;
+      border-top: 1px solid #e0e0e0;
+    }
+    .fz-assessment-body.open { display: block; }
 
-        .premium-content .secret-code {
-            background: rgba(255,255,255,0.2);
-            padding: 20px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 18px;
-            margin: 15px 0;
-            letter-spacing: 2px;
-        }
-
-        .premium-links {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .premium-link {
-            background: rgba(255,255,255,0.2);
-            padding: 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .premium-link:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-
-        .vulnerability-explained {
-            background: #ff4444;
-            color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin: 25px 0;
-            text-align: left;
-        }
-
-        .vulnerability-explained h3 {
-            margin-bottom: 15px;
-        }
-
-        .vulnerability-explained ol {
-            margin-left: 20px;
-            line-height: 1.8;
-        }
-
-        .vulnerability-explained li {
-            margin: 10px 0;
-        }
-
-        .security-lessons {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            text-align: left;
-        }
-
-        .security-lessons h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .security-lessons ul {
-            margin-left: 20px;
-            line-height: 1.8;
-        }
-
-        .security-lessons li {
-            margin: 10px 0;
-            color: #666;
-        }
-
-        .security-lessons strong {
-            color: #667eea;
-        }
-
-        .home-btn {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 12px 40px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 30px;
-            transition: all 0.3s;
-        }
-
-        .home-btn:hover {
-            background: #5568d3;
-            transform: scale(1.05);
-        }
-
-        .legitimate-badge {
-            display: inline-block;
-            background: #44ff44;
-            color: #155724;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin: 5px;
-        }
-
-        .fraudulent-badge {
-            display: inline-block;
-            background: #ff4444;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin: 5px;
-        }
-    </style>
+    /* Assessment content */
+    .fz-assess-section { margin-bottom: 20px; }
+    .fz-assess-label {
+      font-size: 11px;
+      color: #e94560;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 8px;
+      border-left: 3px solid #e94560;
+      padding-left: 8px;
+    }
+    .fz-exploit-steps {
+      background: #1a1a2e;
+      border-radius: 6px;
+      padding: 14px 16px;
+      counter-reset: step;
+    }
+    .fz-exploit-step {
+      color: rgba(255,255,255,0.82);
+      font-size: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+    .fz-exploit-step:last-child { border-bottom: none; }
+    .fz-step-num {
+      background: #e94560;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .fz-defense-list { list-style: none; padding: 0; }
+    .fz-defense-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f3f6;
+      font-size: 13px;
+      color: #555;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .fz-defense-list li:last-child { border-bottom: none; }
+    .fz-defense-list li strong { color: #0f3460; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="success-icon">🎉</div>
-            
-            <h1>Payment Successful!</h1>
-            <p class="subtitle">Thank you for your purchase</p>
 
-            <div class="order-summary">
-                <div>
-                    <span><strong>Order ID:</strong></span>
-                    <span id="orderId">Loading...</span>
-                </div>
-                <div>
-                    <span><strong>Product:</strong></span>
-                    <span>Premium Cybersecurity Course</span>
-                </div>
-                <div>
-                    <span><strong>Amount Paid:</strong></span>
-                    <span>₹999</span>
-                </div>
-                <div>
-                    <span><strong>Status:</strong></span>
-                    <span style="color: green; font-weight: bold;">PAID ✅</span>
-                </div>
-                <div id="paymentMethod">
-                    <span><strong>Payment Method:</strong></span>
-                    <span id="methodBadge">Checking...</span>
-                </div>
-            </div>
+  <!-- ── Mini Header ──────────────────────────────────────── -->
+  <header class="fz-header">
+    <a href="/" class="fz-logo">FlipZon <span>| Order Confirmed</span></a>
+    <div class="fz-header-right">Need help? 1800-XXX-XXXX</div>
+  </header>
 
-            <div class="premium-content">
-                <h2>🔓 Premium Content Unlocked!</h2>
-                <p>You now have access to all exclusive materials</p>
-                
-                <div class="secret-code">
-                    🔑 SECRET CODE: CYBER-MASTER-2026
-                </div>
+  <!-- ── Success Hero ─────────────────────────────────────── -->
+  <div class="fz-success-hero">
+    <div class="fz-check-circle">✓</div>
+    <h1>Order Placed Successfully!</h1>
+    <p>Your order has been confirmed and is being processed. You'll receive a shipping update shortly.</p>
+  </div>
 
-                <div class="premium-links">
-                    <div class="premium-link">📚 Course Modules</div>
-                    <div class="premium-link">🎬 Video Lessons</div>
-                    <div class="premium-link">📝 Practice Labs</div>
-                    <div class="premium-link">🏆 Certificate</div>
-                </div>
-            </div>
+  <div class="fz-wrap">
 
-            <div class="vulnerability-explained">
-                <h3>🚨 What Just Happened?</h3>
-                <p style="margin-bottom: 15px;">
-                    If you unlocked this content by exploiting the webhook, here's what occurred:
-                </p>
-                <ol>
-                    <li><strong>Created Order:</strong> The system generated a PENDING order</li>
-                    <li><strong>Skipped Payment:</strong> You never actually paid anything</li>
-                    <li><strong>Sent Fake Webhook:</strong> You manually called the webhook endpoint</li>
-                    <li><strong>Blindly Trusted:</strong> The server accepted your request without verification</li>
-                    <li><strong>Unlocked Content:</strong> Premium content was granted without payment</li>
-                </ol>
-                <p style="margin-top: 15px; font-weight: bold;">
-                    🎯 Result: You got ₹999 worth of content for FREE by exploiting a vulnerability!
-                </p>
-            </div>
+    <!-- ── Corporate Invoice Receipt ─────────────────────── -->
+    <div class="fz-card">
+      <div class="fz-card-title">🧾 Tax Invoice / Bill of Supply</div>
 
-            <div class="security-lessons">
-                <h3>🛡️ How to Prevent This Attack</h3>
-                <ul>
-                    <li>
-                        <strong>HMAC Signature Verification:</strong> 
-                        Use cryptographic signatures to verify webhook authenticity
-                    </li>
-                    <li>
-                        <strong>Shared Secret Keys:</strong> 
-                        Only accept webhooks with valid secret tokens
-                    </li>
-                    <li>
-                        <strong>IP Whitelisting:</strong> 
-                        Only accept webhooks from known payment gateway IPs
-                    </li>
-                    <li>
-                        <strong>Idempotency Checks:</strong> 
-                        Prevent duplicate payment confirmations for the same order
-                    </li>
-                    <li>
-                        <strong>Amount Validation:</strong> 
-                        Verify the payment amount matches the order
-                    </li>
-                    <li>
-                        <strong>Payment Gateway Confirmation:</strong> 
-                        Query the payment gateway directly to confirm transactions
-                    </li>
-                </ul>
-            </div>
-
-            <a href="/" class="home-btn">← Back to Home</a>
+      <div class="fz-invoice-header">
+        <div>
+          <div class="fz-invoice-logo">FlipZon <span>Internet Pvt. Ltd.</span></div>
+          <div style="font-size:11px;color:#878787;margin-top:4px;">
+            FlipZon Towers, Whitefield,<br>Bengaluru – 560066, India<br>
+            GSTIN: 29ABCDE1234F1Z5
+          </div>
         </div>
+        <div class="fz-invoice-meta">
+          <strong id="invoiceId">INV-XXXXXXXX</strong>
+          <span id="invoiceDate" style="font-size:11px;display:block;margin-top:4px;"></span>
+          <span style="display:inline-block;margin-top:8px;background:#ecfdf5;color:#16a34a;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:800;border:1px solid #86efac;">PAID ✅</span>
+        </div>
+      </div>
+
+      <!-- Product row -->
+      <div class="fz-product-row">
+        <div class="fz-product-thumb">🛍</div>
+        <div class="fz-product-info">
+          <div class="name" id="receiptProduct">Loading…</div>
+          <div class="sub">SKU: FZ-<span id="receiptSKU">XXXXXX</span> · Category: FlipZon Exclusive</div>
+          <div class="sub">Seller: FlipZon Retail Pvt. Ltd. · Returnable within 10 days</div>
+        </div>
+        <div class="fz-product-price" id="receiptPrice">₹—</div>
+      </div>
+
+      <!-- Invoice line items -->
+      <div style="margin-top:14px;">
+        <div class="fz-invoice-row"><span class="label">Item Price (MRP)</span><span class="value" id="lineItemPrice">₹—</span></div>
+        <div class="fz-invoice-row"><span class="label">Platform Discount</span><span class="value" style="color:#22c55e;">- ₹0</span></div>
+        <div class="fz-invoice-row"><span class="label">Delivery Charges</span><span class="value" style="color:#22c55e;">FREE</span></div>
+        <div class="fz-invoice-row"><span class="label">CGST (9%)</span><span class="value" id="cgst">₹—</span></div>
+        <div class="fz-invoice-row"><span class="label">SGST (9%)</span><span class="value" id="sgst">₹—</span></div>
+        <div class="fz-invoice-row total-row">
+          <span class="label">Amount Paid</span>
+          <span class="value" id="receiptTotal">₹—</span>
+        </div>
+      </div>
+
+      <!-- Billing details -->
+      <div style="margin-top:18px;padding-top:14px;border-top:1px dashed #e0e0e0;">
+        <div class="fz-invoice-row">
+          <span class="label">Order Reference</span>
+          <span class="value" style="font-family:monospace;font-size:12px;" id="receiptOrderId">—</span>
+        </div>
+        <div class="fz-invoice-row">
+          <span class="label">Payment Method</span>
+          <span class="value" id="receiptMethodBadge">—</span>
+        </div>
+        <div class="fz-invoice-row">
+          <span class="label">Transaction Time</span>
+          <span class="value" id="receiptPaidAt">—</span>
+        </div>
+      </div>
     </div>
 
-    <script>
-        // Get order ID from URL
-        const pathParts = window.location.pathname.split('/');
-        const orderId = pathParts[pathParts.length - 1];
+    <!-- ── Shipping Timeline ───────────────────────────── -->
+    <div class="fz-card">
+      <div class="fz-card-title">🚚 Shipment Tracking</div>
+      <div class="fz-timeline">
+        <div class="fz-timeline-item">
+          <div class="fz-timeline-dot active"></div>
+          <div class="fz-timeline-title">Order Confirmed</div>
+          <div class="fz-timeline-sub" id="timelineConfirmed">—</div>
+          <div class="fz-timeline-eta">Payment verified by FlipZon gateway</div>
+        </div>
+        <div class="fz-timeline-item">
+          <div class="fz-timeline-dot"></div>
+          <div class="fz-timeline-title">Processing &amp; Packing</div>
+          <div class="fz-timeline-sub">Expected: Within 12 hours</div>
+          <div class="fz-timeline-eta">Whitefield Fulfilment Centre, Bengaluru</div>
+        </div>
+        <div class="fz-timeline-item">
+          <div class="fz-timeline-dot"></div>
+          <div class="fz-timeline-title">Shipped</div>
+          <div class="fz-timeline-sub">Expected: Tomorrow by 6 PM</div>
+          <div class="fz-timeline-eta">via FlipZon Logistics (Tracking: FL-XXXXXXXXXX)</div>
+        </div>
+        <div class="fz-timeline-item" style="margin-bottom:0;">
+          <div class="fz-timeline-dot"></div>
+          <div class="fz-timeline-title">Delivered</div>
+          <div class="fz-timeline-sub">Estimated delivery: 2–3 business days</div>
+          <div class="fz-timeline-eta">Free scheduled delivery slot available</div>
+        </div>
+      </div>
+    </div>
 
-        // Display order ID
-        document.getElementById('orderId').textContent = orderId;
+    <!-- ── CTA ────────────────────────────────────────────── -->
+    <div class="fz-card" style="padding: 20px 26px;">
+      <div class="fz-cta-row">
+        <a href="/" class="fz-btn-primary">← Continue Shopping</a>
+        <a href="#" class="fz-btn-secondary">📄 Download Invoice</a>
+        <a href="#" class="fz-btn-secondary">📦 Track Order</a>
+      </div>
+    </div>
 
-        // Fetch order details to determine if it was legitimate or fraudulent
-        async function checkPaymentMethod() {
-            try {
-                const response = await fetch(`/api/order/${orderId}`);
-                const data = await response.json();
+    <!-- ── Vulnerability Assessment Accordion (collapsed) ── -->
+    <div class="fz-assessment-wrap">
+      <button class="fz-assessment-toggle" id="assessBtn" onclick="toggleAssessment()">
+        <span>🔬 System Vulnerability Assessment Summary // Presentation Debrief</span>
+        <span class="arr">▼</span>
+      </button>
+      <div class="fz-assessment-body" id="assessBody">
 
-                const methodElement = document.getElementById('methodBadge');
-                
-                // In this demo, we can't truly distinguish, but we can check timing
-                const created = new Date(data.created_at);
-                const paid = new Date(data.paid_at);
-                const timeDiff = (paid - created) / 1000; // seconds
+        <div class="fz-assess-section">
+          <div class="fz-assess-label">Attack Vector — What Just Happened</div>
+          <div class="fz-exploit-steps">
+            <div class="fz-exploit-step"><span class="fz-step-num">1</span><span><strong style="color:#60a5fa;">Order Created:</strong> The system generated a PENDING order without any payment commitment.</span></div>
+            <div class="fz-exploit-step"><span class="fz-step-num">2</span><span><strong style="color:#60a5fa;">Payment Skipped:</strong> No real money was transferred. The payment gateway was never contacted.</span></div>
+            <div class="fz-exploit-step"><span class="fz-step-num">3</span><span><strong style="color:#60a5fa;">Fake Webhook Sent:</strong> The <code style="color:#4ade80;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">/webhook/payment</code> endpoint was called directly with a crafted payload.</span></div>
+            <div class="fz-exploit-step"><span class="fz-step-num">4</span><span><strong style="color:#60a5fa;">Blind Trust:</strong> The server accepted <code style="color:#4ade80;background:rgba(255,255,255,0.1);padding:1px 5px;border-radius:3px;">payment_success: true</code> without any HMAC signature verification.</span></div>
+            <div class="fz-exploit-step"><span class="fz-step-num">5</span><span><strong style="color:#f87171;">Exploit Complete:</strong> Order status upgraded to PAID — premium content (worth ₹999+) unlocked for ₹0.</span></div>
+          </div>
+        </div>
 
-                if (timeDiff < 5) {
-                    // Likely exploited (paid too quickly)
-                    methodElement.innerHTML = '<span class="fraudulent-badge">⚠️ WEBHOOK EXPLOIT</span>';
-                } else {
-                    // Took normal time (possibly legitimate)
-                    methodElement.innerHTML = '<span class="legitimate-badge">✅ Normal Flow</span>';
-                }
+        <div class="fz-assess-section">
+          <div class="fz-assess-label">Mitigations — How to Prevent This</div>
+          <ul class="fz-defense-list">
+            <li>🔐 <span><strong>HMAC Signature Verification:</strong> Compute and validate a shared-secret cryptographic digest on every inbound webhook payload before processing it.</span></li>
+            <li>🌐 <span><strong>IP Allowlisting:</strong> Restrict the webhook endpoint to IP ranges published by the payment gateway provider. Reject all others.</span></li>
+            <li>🔁 <span><strong>Idempotency Keys:</strong> Reject duplicate webhook events for the same order ID to prevent replay attacks.</span></li>
+            <li>💰 <span><strong>Amount Validation:</strong> Cross-check the webhook-reported amount against the stored order amount before marking as paid.</span></li>
+            <li>📞 <span><strong>Out-of-Band Confirmation:</strong> Query the payment gateway's REST API directly to verify transaction status — never rely solely on inbound webhooks.</span></li>
+            <li>⏱ <span><strong>Timestamp / Replay Protection:</strong> Reject webhooks where the event timestamp is older than a configurable threshold (e.g., 5 minutes).</span></li>
+          </ul>
+        </div>
 
-                console.log('Payment details:', data);
-                console.log('Time difference:', timeDiff, 'seconds');
-            } catch (error) {
-                console.error('Error fetching order:', error);
-                document.getElementById('methodBadge').textContent = 'Unknown';
-            }
+      </div>
+    </div>
+
+  </div><!-- /fz-wrap -->
+
+  <script>
+    /* ── Extract order ID ───────────────────────────────── */
+    const pathParts = window.location.pathname.split('/');
+    const orderId   = pathParts[pathParts.length - 1];
+
+    /* ── Populate receipt ───────────────────────────────── */
+    document.getElementById('receiptOrderId').textContent = orderId;
+    document.getElementById('invoiceId').textContent = 'INV-' + orderId.replace('ORD_', '');
+    document.getElementById('invoiceDate').textContent = new Date().toLocaleDateString('en-IN', {
+      day: '2-digit', month: 'long', year: 'numeric'
+    });
+
+    fetch(`/api/order/${orderId}`)
+      .then(r => r.json())
+      .then(data => {
+        /* Product & pricing */
+        const amt = data.amount || 0;
+        const tax = Math.round(amt * 0.09);
+
+        document.getElementById('receiptProduct').textContent  = data.product || '—';
+        document.getElementById('receiptSKU').textContent      = orderId.slice(-6);
+        document.getElementById('receiptPrice').textContent    = `₹${amt}`;
+        document.getElementById('lineItemPrice').textContent   = `₹${amt}`;
+        document.getElementById('receiptTotal').textContent    = `₹${amt}`;
+        document.getElementById('cgst').textContent            = `₹${tax} (incl.)`;
+        document.getElementById('sgst').textContent            = `₹${tax} (incl.)`;
+
+        /* Paid timestamp */
+        if (data.paid_at) {
+          document.getElementById('receiptPaidAt').textContent   = new Date(data.paid_at).toLocaleString('en-IN');
+          document.getElementById('timelineConfirmed').textContent = new Date(data.paid_at).toLocaleString('en-IN');
         }
 
-        // Check payment method on load
-        checkPaymentMethod();
-    </script>
+        /* Payment method badge — detect webhook exploit by time delta */
+        const created  = new Date(data.created_at);
+        const paid     = new Date(data.paid_at);
+        const deltaSec = (paid - created) / 1000;
+
+        const methodEl = document.getElementById('receiptMethodBadge');
+        if (deltaSec < 5) {
+          methodEl.innerHTML = '<span class="fz-method-badge exploit">⚠ Webhook Override</span>';
+        } else {
+          methodEl.innerHTML = '<span class="fz-method-badge legit">✅ Standard Gateway</span>';
+        }
+      })
+      .catch(() => {
+        document.getElementById('receiptProduct').textContent = 'Order Item';
+      });
+
+    /* ── Accordion toggle ────────────────────────────────── */
+    function toggleAssessment() {
+      document.getElementById('assessBtn').classList.toggle('open');
+      document.getElementById('assessBody').classList.toggle('open');
+    }
+  </script>
 </body>
 </html>
