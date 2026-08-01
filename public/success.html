@@ -1,45 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Confirmed — FlipZon</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed — Netflix Demo</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f1f3f6;
       min-height: 100vh;
-      color: #212121;
+      color: #f5f5f5;
+      background:
+        radial-gradient(circle at top, rgba(229, 9, 20, 0.16), transparent 25%),
+        linear-gradient(135deg, #05070b 0%, #141414 100%);
     }
 
-    /* ── MINI HEADER ─────────────────────────────────────── */
     .fz-header {
-      background: #0f3460;
-      padding: 12px 24px;
+      background: rgba(10, 10, 10, 0.96);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .fz-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
       font-size: 22px;
       font-weight: 900;
-      color: #e94560;
-      text-decoration: none;
+      color: #e50914;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
     }
-    .fz-logo span { color: #fff; font-weight: 400; font-size: 12px; margin-left: 6px; }
-    .fz-header-right { font-size: 12px; color: rgba(255,255,255,0.65); }
+    .fz-logo-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      background: #e50914;
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .fz-logo-sub {
+      color: #cfcfcf;
+      font-size: 11px;
+      font-weight: 500;
+      margin-left: 6px;
+      letter-spacing: 0.2em;
+      text-transform: none;
+    }
+    .fz-header-right { font-size: 12px; color: rgba(255,255,255,0.7); }
 
-    /* ── SUCCESS HERO ────────────────────────────────────── */
     .fz-success-hero {
-      background: linear-gradient(120deg, #16a34a 0%, #15803d 100%);
+      background: linear-gradient(120deg, rgba(229,9,20,0.28), rgba(41, 41, 41, 0.9));
       padding: 36px 24px;
       text-align: center;
       color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .fz-check-circle {
-      width: 72px; height: 72px;
-      background: rgba(255,255,255,0.2);
+      width: 74px; height: 74px;
+      background: rgba(255,255,255,0.12);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -48,85 +74,79 @@
       margin: 0 auto 14px;
       animation: popIn .5s cubic-bezier(.175,.885,.32,1.275) forwards;
     }
-    @keyframes popIn {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
+    @keyframes popIn { 0%{transform:scale(0);opacity:0;} 100%{transform:scale(1);opacity:1;} }
     .fz-success-hero h1 { font-size: 26px; font-weight: 900; margin-bottom: 6px; }
-    .fz-success-hero p { font-size: 14px; color: rgba(255,255,255,0.82); }
+    .fz-success-hero p { font-size: 14px; color: rgba(255,255,255,0.8); }
 
-    /* ── PAGE LAYOUT ─────────────────────────────────────── */
     .fz-wrap {
-      max-width: 860px;
+      max-width: 900px;
       margin: 28px auto;
-      padding: 0 18px;
+      padding: 0 18px 36px;
     }
 
-    /* ── CARDS ───────────────────────────────────────────── */
     .fz-card {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      background: rgba(20,20,20,0.92);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 22px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.35);
       padding: 22px 26px;
       margin-bottom: 18px;
     }
     .fz-card-title {
       font-size: 15px;
       font-weight: 800;
-      color: #0f3460;
+      color: white;
       margin-bottom: 18px;
       padding-bottom: 12px;
-      border-bottom: 2px solid #f1f3f6;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    /* ── INVOICE ─────────────────────────────────────────── */
     .fz-invoice-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 20px;
       padding-bottom: 16px;
-      border-bottom: 1px solid #f1f3f6;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-    .fz-invoice-logo { font-size: 22px; font-weight: 900; color: #e94560; }
-    .fz-invoice-logo span { font-size: 11px; font-weight: 400; color: #878787; display: block; }
-    .fz-invoice-meta { text-align: right; font-size: 12px; color: #555; }
-    .fz-invoice-meta strong { font-size: 14px; color: #0f3460; display: block; }
+    .fz-invoice-logo { font-size: 22px; font-weight: 900; color: #e50914; }
+    .fz-invoice-logo span { font-size: 11px; font-weight: 400; color: #8f8f8f; display: block; }
+    .fz-invoice-meta { text-align: right; font-size: 12px; color: #b7b7b7; }
+    .fz-invoice-meta strong { font-size: 14px; color: white; display: block; }
 
     .fz-invoice-row {
       display: flex;
       justify-content: space-between;
       padding: 9px 0;
       font-size: 13px;
-      border-bottom: 1px solid #f8f9fa;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
     .fz-invoice-row:last-child { border-bottom: none; }
-    .fz-invoice-row .label { color: #878787; }
-    .fz-invoice-row .value { font-weight: 700; color: #212121; }
+    .fz-invoice-row .label { color: #8f8f8f; }
+    .fz-invoice-row .value { font-weight: 700; color: white; }
     .fz-invoice-row.total-row {
       padding-top: 14px;
       margin-top: 6px;
-      border-top: 2px dashed #e0e0e0;
+      border-top: 1px dashed rgba(255,255,255,0.16);
       border-bottom: none;
     }
-    .fz-invoice-row.total-row .label { font-size: 15px; font-weight: 800; color: #212121; }
-    .fz-invoice-row.total-row .value { font-size: 18px; font-weight: 900; color: #0f3460; }
+    .fz-invoice-row.total-row .label { font-size: 15px; font-weight: 800; color: white; }
+    .fz-invoice-row.total-row .value { font-size: 18px; font-weight: 900; color: #ff5a5f; }
 
-    /* ── PRODUCT ITEM IN INVOICE ─────────────────────────── */
     .fz-product-row {
       display: flex;
       align-items: center;
       gap: 14px;
       padding: 14px 0;
-      border-bottom: 1px solid #f1f3f6;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
     .fz-product-thumb {
       width: 58px; height: 58px;
-      background: #f0f4ff;
-      border-radius: 6px;
+      background: rgba(229,9,20,0.16);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -134,130 +154,121 @@
       flex-shrink: 0;
     }
     .fz-product-info { flex: 1; }
-    .fz-product-info .name { font-size: 14px; font-weight: 700; color: #212121; }
-    .fz-product-info .sub { font-size: 11px; color: #878787; margin-top: 3px; }
-    .fz-product-price { font-size: 16px; font-weight: 900; color: #0f3460; }
+    .fz-product-info .name { font-size: 14px; font-weight: 700; color: white; }
+    .fz-product-info .sub { font-size: 11px; color: #8f8f8f; margin-top: 3px; }
+    .fz-product-price { font-size: 16px; font-weight: 900; color: #ff5a5f; }
 
-    /* ── SHIPPING TIMELINE ───────────────────────────────── */
-    .fz-timeline {
-      position: relative;
-      padding-left: 28px;
-    }
-    .fz-timeline::before {
-      content: '';
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      bottom: 10px;
-      width: 2px;
-      background: #e0e0e0;
-    }
-    .fz-timeline-item { position: relative; margin-bottom: 18px; }
-    .fz-timeline-dot {
-      position: absolute;
-      left: -22px;
-      top: 3px;
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      border: 2px solid #ccc;
-      background: #fff;
-    }
-    .fz-timeline-dot.active { border-color: #22c55e; background: #22c55e; }
-    .fz-timeline-title { font-size: 13px; font-weight: 700; color: #212121; }
-    .fz-timeline-sub { font-size: 11px; color: #878787; margin-top: 2px; }
-    .fz-timeline-eta { font-size: 11px; color: #0f3460; font-weight: 700; margin-top: 2px; }
-
-    /* Payment method badge */
     .fz-method-badge {
       display: inline-block;
       padding: 4px 12px;
-      border-radius: 12px;
+      border-radius: 999px;
       font-size: 11px;
       font-weight: 800;
     }
-    .fz-method-badge.legit    { background: #ecfdf5; color: #16a34a; border: 1px solid #86efac; }
-    .fz-method-badge.exploit  { background: #fff7ed; color: #ea580c; border: 1px solid #fdba74; }
+    .fz-method-badge.legit { background: rgba(34,197,94,0.16); color: #4ade80; border: 1px solid rgba(74,222,128,0.25); }
+    .fz-method-badge.exploit { background: rgba(249,115,22,0.16); color: #fdba74; border: 1px solid rgba(253,186,116,0.25); }
 
-    /* ── CTA BUTTONS ─────────────────────────────────────── */
     .fz-cta-row { display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; }
     .fz-btn-primary {
-      background: #0f3460;
+      background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
       color: #fff;
       padding: 11px 24px;
-      border-radius: 5px;
+      border-radius: 999px;
       font-size: 14px;
       font-weight: 700;
       text-decoration: none;
-      transition: background .2s;
       display: inline-block;
+      transition: transform .2s, opacity .2s;
     }
-    .fz-btn-primary:hover { background: #0a2447; }
+    .fz-btn-primary:hover { opacity: .95; transform: translateY(-1px); }
     .fz-btn-secondary {
-      background: #f1f3f6;
-      color: #0f3460;
+      background: rgba(255,255,255,0.06);
+      color: white;
       padding: 11px 24px;
-      border-radius: 5px;
+      border-radius: 999px;
       font-size: 14px;
       font-weight: 700;
       text-decoration: none;
-      transition: background .2s;
       display: inline-block;
-      border: 1px solid #d0d0d0;
+      border: 1px solid rgba(255,255,255,0.1);
     }
-    .fz-btn-secondary:hover { background: #e4e7eb; }
+    .fz-btn-secondary:hover { background: rgba(255,255,255,0.12); }
+  </style>
+</head>
+<body>
+  <header class="fz-header">
+    <a href="/browse" class="fz-logo"><span class="fz-logo-mark">N</span> Netflix <span class="fz-logo-sub">Payment Received</span></a>
+    <div class="fz-header-right">Secure demo flow</div>
+  </header>
 
-    /* ── ASSESSMENT ACCORDION ────────────────────────────── */
-    .fz-assessment-wrap {
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-    .fz-assessment-toggle {
-      width: 100%;
-      background: #f8f9fa;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      font-size: 13px;
-      font-weight: 700;
-      color: #555;
-      cursor: pointer;
-      text-align: left;
-      transition: background .2s;
-    }
-    .fz-assessment-toggle:hover { background: #eef0f3; }
-    .fz-assessment-toggle .arr { transition: transform .25s; font-size: 11px; }
-    .fz-assessment-toggle.open .arr { transform: rotate(180deg); }
-    .fz-assessment-body {
-      display: none;
-      padding: 20px 22px;
-      background: #fff;
-      border-top: 1px solid #e0e0e0;
-    }
-    .fz-assessment-body.open { display: block; }
+  <section class="fz-success-hero">
+    <div class="fz-check-circle">✓</div>
+    <h1>Payment Confirmed</h1>
+    <p>Your order is now marked as paid and ready for the next step in the demo.</p>
+  </section>
 
-    /* Assessment content */
-    .fz-assess-section { margin-bottom: 20px; }
-    .fz-assess-label {
-      font-size: 11px;
-      color: #e94560;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-bottom: 8px;
-      border-left: 3px solid #e94560;
-      padding-left: 8px;
-    }
-    .fz-exploit-steps {
-      background: #1a1a2e;
-      border-radius: 6px;
-      padding: 14px 16px;
-      counter-reset: step;
-    }
-    .fz-exploit-step {
-      color: rgba(255,255,255,0.82);
+  <div class="fz-wrap">
+    <div class="fz-card">
+      <div class="fz-card-title">🧾 Order Receipt</div>
+      <div class="fz-invoice-header">
+        <div>
+          <div class="fz-invoice-logo">NETFLIX <span>Premium Access</span></div>
+        </div>
+        <div class="fz-invoice-meta">
+          <strong>Order Confirmed</strong>
+          <div id="receiptId">Loading…</div>
+        </div>
+      </div>
+
+      <div class="fz-product-row">
+        <div class="fz-product-thumb">🎬</div>
+        <div class="fz-product-info">
+          <div class="name" id="receiptProduct">Premium Subscription</div>
+          <div class="sub">Demo payment flow · Secure webhook confirmation</div>
+        </div>
+        <div class="fz-product-price" id="receiptAmount">₹0</div>
+      </div>
+
+      <div class="fz-invoice-row">
+        <span class="label">Status</span>
+        <span class="value"><span class="fz-method-badge legit">PAID</span></span>
+      </div>
+      <div class="fz-invoice-row">
+        <span class="label">Payment Method</span>
+        <span class="value">Demo Card</span>
+      </div>
+      <div class="fz-invoice-row total-row">
+        <span class="label">Total Paid</span>
+        <span class="value" id="receiptAmount2">₹0</span>
+      </div>
+
+      <div class="fz-cta-row" style="margin-top: 18px;">
+        <a href="/browse" class="fz-btn-primary">Return to Home</a>
+        <a href="/" class="fz-btn-secondary">Open Demo Start</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pathParts = window.location.pathname.split('/');
+    const orderId = pathParts[pathParts.length - 1];
+    document.getElementById('receiptId').textContent = orderId;
+
+    fetch(`/api/order/${orderId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.product) {
+          document.getElementById('receiptProduct').textContent = data.product;
+          document.getElementById('receiptAmount').textContent = `₹${data.amount}`;
+          document.getElementById('receiptAmount2').textContent = `₹${data.amount}`;
+        }
+      })
+      .catch(() => {
+        document.getElementById('receiptProduct').textContent = 'Premium Subscription';
+      });
+  </script>
+</body>
+</html>
       font-size: 12px;
       padding: 6px 0;
       border-bottom: 1px solid rgba(255,255,255,0.06);

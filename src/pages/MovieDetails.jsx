@@ -42,7 +42,14 @@ export default function MovieDetails() {
         throw new Error('Order creation failed');
       }
 
-      navigate(`/checkout/${movie.id}?orderId=${data.order_id}`);
+      navigate(`/checkout/${movie.id}?orderId=${data.order_id}`, {
+        state: {
+          orderId: data.order_id,
+          movieId: movie.id,
+          movieName: movie.title,
+          selectedPlan: { id: 'standard', name: 'Standard', price: 9.99 }
+        }
+      });
     } catch (err) {
       console.error(err);
       setError('Unable to create order. Please try again.');
@@ -59,7 +66,7 @@ export default function MovieDetails() {
   if (!movie) {
     return (
       <div className="min-h-screen bg-background text-white">
-        <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/login')} />
+        <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/profiles')} />
         <div className="mx-auto flex min-h-[70vh] max-w-6xl flex-col items-center justify-center px-4 text-center text-white sm:px-6">
           <h1 className="text-3xl font-semibold">Movie not found</h1>
           <p className="mt-3 text-sm text-slate-400">Please return to the homepage and choose a different title.</p>
@@ -73,7 +80,7 @@ export default function MovieDetails() {
 
   return (
     <div className="min-h-screen bg-background text-white">
-      <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/login')} />
+      <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/profiles')} />
 
       <section className="relative min-h-[80vh] overflow-hidden bg-black/30">
         <div

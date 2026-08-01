@@ -10,7 +10,7 @@ export default function WatchPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
-  const [orderId, setOrderId] = useState(location.state?.orderId || null);
+  const [orderId, setOrderId] = useState(location.state?.orderId || new URLSearchParams(location.search).get('orderId'));
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,15 +46,15 @@ export default function WatchPage() {
   }, [orderId]);
 
   useEffect(() => {
-    if (!loading && orderId && status !== 'PAID') {
-      navigate(`/checkout/${orderId}`, { state: { movieId: id, orderId } });
+    if (!loading && orderId && status !== 'PAID' && movie) {
+      navigate(`/checkout/${movie.id}?orderId=${orderId}`, { state: { movieId: movie.id, orderId } });
     }
-  }, [loading, orderId, status, navigate, id]);
+  }, [loading, orderId, status, navigate, id, movie]);
 
   if (!movie) {
     return (
       <div className="min-h-screen bg-background text-white">
-        <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/login')} />
+        <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/profiles')} />
         <div className="mx-auto flex min-h-[70vh] max-w-6xl flex-col items-center justify-center px-4 text-center text-white sm:px-6">
           <h1 className="text-3xl font-semibold">Movie not found</h1>
           <button onClick={() => navigate('/browse')} className="mt-8 rounded-3xl bg-netflix px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#f40612]">
@@ -76,7 +76,7 @@ export default function WatchPage() {
 
   return (
     <div className="min-h-screen bg-background text-white">
-      <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/login')} />
+      <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/profiles')} />
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-12">
         <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-10 shadow-netflix text-center">
           <span className="inline-flex rounded-full bg-netflix/10 px-4 py-2 text-xs uppercase tracking-[0.35em] text-netflix">Now Playing</span>

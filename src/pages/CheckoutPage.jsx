@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState(location.state?.orderId || new URLSearchParams(location.search).get('orderId'));
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -53,6 +54,19 @@ export default function CheckoutPage() {
     loadOrder();
   }, [orderId]);
 
+  useEffect(() => {
+    if (order?.status === 'PAID' && movie) {
+      navigate(`/watch/${movie.id}?orderId=${orderId}`, { replace: true });
+    }
+  }, [order, movie, navigate, orderId]);
+
+  const handleCompletePayment = () => {
+    if (!orderId) return;
+
+    setSubmitting(true);
+    window.location.href = `/payment/${orderId}?movieId=${id}`;
+  };
+
   if (!getSelectedProfile()) {
     navigate('/profiles', { replace: true });
     return null;
@@ -63,11 +77,11 @@ export default function CheckoutPage() {
     return null;
   }
 
-  if (loading) return <div className="min-h-screen bg-background text-white"><Navbar profile={getSelectedProfile()} onLogout={() => navigate('/login')} /><div className="mx-auto flex min-h-[70vh] max-w-6xl items-center justify-center px-4">Loading checkout...</div></div>;
+  if (loading) return <div className="min-h-screen bg-background text-white"><Navbar profile={getSelectedProfile()} onLogout={() => navigate('/profiles')} /><div className="mx-auto flex min-h-[70vh] max-w-6xl items-center justify-center px-4">Loading checkout...</div></div>;
   if (!movie) {
     return (
       <div className="min-h-screen bg-background text-white">
-        <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/login')} />
+        <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/profiles')} />
         <div className="mx-auto flex min-h-[70vh] max-w-6xl flex-col items-center justify-center px-4 text-center">
           <h1 className="text-3xl font-semibold">Movie not found</h1>
           <button onClick={() => navigate('/browse')} className="mt-8 rounded-3xl bg-netflix px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#f40612]">
@@ -80,11 +94,19 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-background text-white">
-      <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/login')} />
+      <Navbar profile={getSelectedProfile()} onLogout={() => navigate('/profiles')} />
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 sm:px-6 lg:px-12">
         <div className="rounded-3xl border border-white/10 bg-slate-950/80 p-6 shadow-netflix">
           <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Complete Payment</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-white">{movie.title}</h1>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-4xl font-semibold tracking-tight text-white">{movie.title}</h1>
+              <p className="mt-2 text-sm text-slate-400">Order ID: <span className="font-medium text-white">{orderId}</span></p>
+            </div>
+            <div className="rounded-3xl bg-white/5 px-4 py-2 text-sm text-slate-200">
+              Status: <span className="font-semibold text-white">{order?.status || 'PENDING'}</span>
+            </div>
+          </div>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">Choose the plan that unlocks this movie and complete checkout using the existing webhook demo backend.</p>
         </div>
 
