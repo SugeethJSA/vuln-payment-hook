@@ -10,7 +10,10 @@ const PORT = 3000;
 
 // Middleware
 app.use(express.json());
-app.use(express.static('public'));
+
+// Serve React production build first
+app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 
 // In-memory database (resets on server restart)
 let orders = {};
@@ -42,19 +45,21 @@ function logWebhook(data) {
 // ROUTES - FRONTEND PAGES
 // ==========================================
 
-// Homepage
+// Serve React SPA assets from build and root index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-// Payment page
 app.get('/payment/:orderId', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'payment.html'));
 });
 
-// Success page
 app.get('/success/:orderId', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'success.html'));
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // ==========================================
@@ -213,6 +218,10 @@ app.get('/api/all-orders', (req, res) => {
     orders: Object.values(orders),
     total: Object.keys(orders).length
   });
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // ==========================================
