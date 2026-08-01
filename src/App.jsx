@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import ProfileSelection from './pages/ProfileSelection';
 import HomePage from './pages/HomePage';
@@ -10,6 +10,7 @@ import LoadingScreen from './components/LoadingScreen';
 import { getSelectedProfile, isAuthenticated } from './utils/session';
 
 function App() {
+  const location = useLocation();
   const profile = getSelectedProfile();
   const auth = isAuthenticated();
 
