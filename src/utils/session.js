@@ -4,27 +4,33 @@ const ALL_PROFILES_KEY = 'netflix_all_profiles';
 
 const DEFAULT_PROFILES = [
   {
-    id: 'nihara',
+    id: 'augustine',
     name: 'Nihara',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+    avatar: '/avatars/avatar-1.png',
     isKids: false
   },
   {
-    id: 'niranjan',
-    name: 'Niranjan',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80',
+    id: 'mary',
+    name: 'Krish',
+    avatar: '/avatars/avatar-2.png',
     isKids: false
   },
   {
-    id: 'anjali',
-    name: 'Anjali',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+    id: 'thirishal',
+    name: 'Guhan',
+    avatar: '/avatars/avatar-3.png',
     isKids: false
   },
   {
-    id: 'nikhil',
-    name: 'Nikhil',
-    avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80',
+    id: 'sugeeth',
+    name: 'Deepti',
+    avatar: '/avatars/avatar-4.png',
+    isKids: false
+  },
+  {
+    id: 'jacintha',
+    name: 'Maria',
+    avatar: '/avatars/avatar-5.png',
     isKids: false
   }
 ];

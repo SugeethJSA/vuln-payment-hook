@@ -5,6 +5,7 @@ import ProfileSelection from './pages/ProfileSelection';
 import HomePage from './pages/HomePage';
 import MovieDetails from './pages/MovieDetails';
 import CheckoutPage from './pages/CheckoutPage';
+import PaymentUpdatePage from './pages/PaymentUpdatePage';
 import WatchPage from './pages/WatchPage';
 import LoadingScreen from './components/LoadingScreen';
 import { getSelectedProfile, isAuthenticated } from './utils/session';
@@ -45,6 +46,10 @@ function App() {
           <Route
             path="/checkout/:id"
             element={auth ? (profile ? <CheckoutPage /> : <Navigate to="/profiles" replace />) : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/payment-update/:id"
+            element={auth ? (profile ? <PaymentUpdatePage /> : <Navigate to="/profiles" replace />) : <Navigate to="/login" replace />}
           />
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<LoadingScreen />} />

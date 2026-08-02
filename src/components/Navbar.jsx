@@ -47,16 +47,50 @@ export default function Navbar({ profile, onLogout }) {
 
   return (
     <motion.header
-      initial={false}
-      animate={{ backgroundColor: solid || openMenu ? 'rgba(20,20,20,0.98)' : 'rgba(20,20,20,0)' }}
-      transition={{ duration: 0.3 }}
-      className="fixed inset-x-0 top-0 z-40 w-full text-white"
+      className={`fixed inset-x-0 top-0 z-40 w-full text-white transition-colors duration-500 ${
+        solid || openMenu
+          ? 'bg-black shadow-md'
+          : 'bg-gradient-to-b from-black/90 via-black/50 to-transparent'
+      }`}
     >
-      <div className={`mx-auto flex w-full items-center justify-between px-4 py-3 text-sm transition-all duration-300 sm:px-6 lg:px-12 ${solid ? 'bg-black/80 shadow-lg shadow-black/40 backdrop-blur-xl' : ''}`}>
-        <div className="flex items-center gap-8">
+      <div className="mx-auto flex w-full items-center justify-between px-4 py-3.5 text-sm sm:px-6 lg:px-12">
+        {/* TOP LEFT: LOGO + SEARCH ICON + NAV LINKS */}
+        <div className="flex items-center gap-4 sm:gap-6">
           <button onClick={() => navigate('/browse')} className="transition-transform duration-200 hover:scale-105" aria-label="Netflix home">
-            <NetflixLogo className="h-9 w-9" />
+            <NetflixLogo className="h-8 w-auto" variant="wordmark" />
           </button>
+
+          {/* SEARCH ICON ALONE ON TOP LEFT */}
+          <form onSubmit={submitSearch} className="relative flex items-center">
+            <button
+              type="button"
+              onClick={() => setSearchOpen((prev) => !prev)}
+              className="p-1 text-slate-300 hover:text-white transition-colors"
+              aria-label="Search"
+            >
+              <BiSearch className="h-5 w-5" />
+            </button>
+            <AnimatePresence>
+              {searchOpen && (
+                <motion.input
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 170, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  type="text"
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    window.dispatchEvent(new CustomEvent('netflix-search', { detail: e.target.value }));
+                  }}
+                  autoFocus
+                  placeholder="Titles, genres..."
+                  className="ml-1.5 rounded border border-white/40 bg-black/85 px-3 py-1 text-xs text-white outline-none focus:border-white"
+                />
+              )}
+            </AnimatePresence>
+          </form>
+
           <nav className="hidden items-center gap-5 text-sm text-slate-200 md:flex">
             {navItems.map((item) => (
               <button
@@ -70,21 +104,8 @@ export default function Navbar({ profile, onLogout }) {
           </nav>
         </div>
 
+        {/* TOP RIGHT: NOTIFICATIONS & PROFILE */}
         <div className="flex items-center gap-3">
-          <form onSubmit={submitSearch} className="relative hidden items-center sm:flex">
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              onFocus={() => setSearchOpen(true)}
-              onBlur={() => setTimeout(() => setSearchOpen(false), 150)}
-              placeholder="Titles, genres..."
-              className={`w-0 border border-white/50 bg-black/70 py-1.5 pl-8 pr-3 text-white outline-none transition-all duration-300 placeholder:text-slate-400 ${searchOpen ? 'w-48' : 'border-transparent'}`}
-            />
-            <BiSearch
-              className={`absolute left-2 h-5 w-5 cursor-pointer transition-colors ${searchOpen ? 'text-netflix' : 'text-white hover:text-netflix'}`}
-              onClick={() => setSearchOpen((state) => !state)}
-            />
-          </form>
           <button aria-label="Notifications" className="relative p-1.5 text-white transition-colors hover:text-netflix">
             <IoMdNotificationsOutline className="h-6 w-6" />
             <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-netflix" />

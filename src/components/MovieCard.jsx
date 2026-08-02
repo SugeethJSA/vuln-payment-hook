@@ -1,21 +1,25 @@
-import { useNavigate } from 'react-router-dom';
 import { BsFillPlayFill, BsChevronDown } from 'react-icons/bs';
 import { HiPlus, HiThumbUp } from 'react-icons/hi';
 
 export default function MovieCard({ movie, landscape = false }) {
   const imageUrl = movie.poster || movie.image || movie.poster_path || 'https://via.placeholder.com/300x450?text=Movie';
-  const navigate = useNavigate();
   const match = movie.rating ? Math.min(99, Math.round(Number(movie.rating) * 10 + 8)) : 95;
+
+  const handleOpenModal = (e) => {
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent('netflix-open-modal', { detail: { id: movie.id } }));
+  };
 
   return (
     <div
-      onClick={() => navigate(`/movie/${movie.id}`)}
-      className={`group/card relative shrink-0 cursor-pointer transition-all duration-300 ease-out hover:z-20 hover:scale-[1.3] hover:shadow-[0_20px_50px_rgba(0,0,0,0.85)] ${
-        landscape ? 'w-[260px] sm:w-[300px]' : 'w-[170px] sm:w-[190px]'
+      onClick={handleOpenModal}
+      className={`group/card relative shrink-0 cursor-pointer transition-all duration-300 ease-out hover:z-50 hover:scale-[1.22] hover:shadow-[0_25px_60px_rgba(0,0,0,0.95)] ${
+        landscape ? 'w-[230px] sm:w-[270px]' : 'w-[145px] sm:w-[170px]'
       }`}
-      style={{ transformOrigin: 'center bottom' }}
+      style={{ transformOrigin: 'center center' }}
     >
-      <div className="relative overflow-hidden rounded-md bg-slate-900">
+      {/* Base Sharp Rectangular Poster Container */}
+      <div className="relative overflow-hidden bg-slate-900 border border-white/10 shadow-md transition-all duration-300 group-hover/card:border-white/30">
         <img
           src={imageUrl}
           alt={movie.title || movie.name}
@@ -24,76 +28,85 @@ export default function MovieCard({ movie, landscape = false }) {
           }`}
           loading="lazy"
         />
-        <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent ${landscape ? 'opacity-90' : 'opacity-80'}`} />
 
-        <div className="absolute inset-x-0 bottom-0 px-3 pb-2.5">
-          <p className="line-clamp-1 text-sm font-semibold text-white drop-shadow">
+        {/* Gradient Overlay for Base Title */}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent p-2.5 pt-6 transition-opacity duration-300 group-hover/card:opacity-0">
+          <p className="line-clamp-1 text-xs font-bold text-white drop-shadow sm:text-sm">
             {movie.title || movie.name}
           </p>
           {landscape && movie.progress !== undefined && (
-            <p className="mt-0.5 text-[10px] font-medium text-slate-300">
+            <p className="mt-0.5 text-[10px] font-semibold text-slate-300">
               {movie.progress}% watched
             </p>
           )}
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white/25">
-          <div
-            className="h-full bg-netflix transition-all duration-500"
-            style={{ width: `${Math.min(100, movie.progress ?? 0)}%` }}
-          />
-        </div>
+        {/* Progress Bar for Continue Watching */}
+        {landscape && movie.progress !== undefined && (
+          <div className="absolute inset-x-0 bottom-0 h-[3px] bg-white/25">
+            <div
+              className="h-full bg-netflix transition-all duration-500"
+              style={{ width: `${Math.min(100, movie.progress ?? 0)}%` }}
+            />
+          </div>
+        )}
       </div>
 
-      <div className="pointer-events-none absolute left-0 right-0 top-full z-10 overflow-hidden rounded-md bg-surface shadow-[0_20px_50px_rgba(0,0,0,0.9)] opacity-0 transition-all duration-300 ease-out group-hover/card:opacity-100">
-        <div className="p-3">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.id}`); }}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-black transition hover:bg-slate-200"
-              aria-label="Play"
-            >
-              <BsFillPlayFill className="h-5 w-5" />
-            </button>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/70 bg-black/50 text-white transition hover:border-white hover:bg-white/10"
-              aria-label="My List"
-            >
-              <HiPlus className="h-4 w-4" />
-            </button>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-white/70 bg-black/50 text-white transition hover:border-white hover:bg-white/10"
-              aria-label="Like"
-            >
-              <HiThumbUp className="h-4 w-4" />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); navigate(`/movie/${movie.id}`); }}
-              className="ml-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/70 bg-black/50 text-white transition hover:border-white hover:bg-white/10"
-              aria-label="More info"
-            >
-              <BsChevronDown className="h-4 w-4" />
-            </button>
-          </div>
+      {/* Popover Card Action Menu Below the Poster */}
+      <div className="pointer-events-none absolute left-0 right-0 top-full z-50 overflow-hidden border-x border-b border-white/20 bg-[#181818] p-3 shadow-[0_25px_60px_rgba(0,0,0,0.95)] opacity-0 transition-all duration-300 ease-out group-hover/card:pointer-events-auto group-hover/card:opacity-100">
+        {/* Title in Popover */}
+        <p className="line-clamp-1 text-xs font-extrabold text-white mb-2 sm:text-sm drop-shadow-md">
+          {movie.title || movie.name}
+        </p>
 
-          <div className="mt-3 space-y-1.5 text-[11px] leading-4">
-            <div className="flex flex-wrap items-center gap-2 font-medium">
-              <span className="text-emerald-400">{match}% Match</span>
-              {movie.maturity && (
-                <span className="rounded-sm border border-white/40 px-1.5 text-[10px] text-slate-300">
-                  {movie.maturity}
-                </span>
-              )}
-              {movie.runtime && <span className="text-slate-300">{movie.runtime} min</span>}
-            </div>
-            {movie.genres && (
-              <p className="line-clamp-2 text-slate-300">
-                {movie.genres.join(' · ')}
-              </p>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-1.5 mb-2.5">
+          <button
+            onClick={handleOpenModal}
+            className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-black transition hover:bg-slate-200 active:scale-95 shadow-md"
+            aria-label="Play"
+          >
+            <BsFillPlayFill className="h-4 w-4 ml-0.5" />
+          </button>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/40 bg-[#2a2a2a]/80 text-white transition hover:border-white hover:bg-white/20 active:scale-95"
+            aria-label="My List"
+          >
+            <HiPlus className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/40 bg-[#2a2a2a]/80 text-white transition hover:border-white hover:bg-white/20 active:scale-95"
+            aria-label="Like"
+          >
+            <HiThumbUp className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={handleOpenModal}
+            className="ml-auto flex h-7 w-7 items-center justify-center rounded-full border border-white/40 bg-[#2a2a2a]/80 text-white transition hover:border-white hover:bg-white/20 active:scale-95"
+            aria-label="More info"
+          >
+            <BsChevronDown className="h-3.5 w-3.5" />
+          </button>
+        </div>
+
+        {/* Card Metadata */}
+        <div className="space-y-0.5 text-[10px] leading-tight">
+          <div className="flex flex-wrap items-center gap-1.5 font-bold">
+            <span className="text-emerald-400 font-extrabold">{match}% Match</span>
+            {movie.maturity && (
+              <span className="border border-white/40 px-1 py-0.2 text-[9px] font-semibold text-slate-300">
+                {movie.maturity}
+              </span>
             )}
+            <span className="border border-white/30 px-1 py-0.2 text-[9px] font-semibold text-slate-400">HD</span>
           </div>
+          {movie.genres && (
+            <p className="line-clamp-1 text-slate-300 font-medium text-[9.5px] pt-0.5">
+              {movie.genres.join(' · ')}
+            </p>
+          )}
         </div>
       </div>
     </div>

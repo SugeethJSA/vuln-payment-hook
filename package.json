@@ -1,6 +1,7 @@
 {
   "name": "vulnerable-webhook-demo",
   "version": "1.0.0",
+  "type": "module",
   "description": "Educational demo showing webhook integration vulnerabilities",
   "main": "server.js",
   "scripts": {
