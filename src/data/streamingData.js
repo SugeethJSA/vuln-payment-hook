@@ -2,28 +2,38 @@ export const profiles = [
   {
     id: 'nihara',
     name: 'Nihara',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80'
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+    isKids: false
   },
   {
     id: 'niranjan',
     name: 'Niranjan',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80'
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80',
+    isKids: false
   },
   {
     id: 'anjali',
     name: 'Anjali',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80'
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+    isKids: false
   },
   {
     id: 'nikhil',
     name: 'Nikhil',
-    avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80'
-  },
-  {
-    id: 'family',
-    name: 'Family',
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80'
+    avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80',
+    isKids: false
   }
+];
+
+export const avatarOptions = [
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80'
 ];
 
 export const movieCatalog = [
@@ -40,6 +50,7 @@ export const movieCatalog = [
     year: 2025,
     genres: ['Action', 'Sci-Fi', 'Thriller'],
     languages: ['English', 'Hindi'],
+    cast: ['Meera Anand', 'Kavya Iyer', 'Dev Khanna'],
     progress: 42
   },
   {
@@ -54,7 +65,8 @@ export const movieCatalog = [
     rating: '7.9',
     year: 2024,
     genres: ['Drama', 'Mystery'],
-    languages: ['English']
+    languages: ['English'],
+    cast: ['Arjun Menon', 'Sara Thomas', 'Rahul Verma']
   },
   {
     id: 'cosmic-outlaw',
@@ -68,7 +80,8 @@ export const movieCatalog = [
     rating: '8.1',
     year: 2025,
     genres: ['Sci-Fi', 'Adventure'],
-    languages: ['English']
+    languages: ['English'],
+    cast: ['Zara Siddiqui', 'Noah Fernandes', 'Vikram Rao']
   },
   {
     id: 'nightshift',
@@ -82,7 +95,8 @@ export const movieCatalog = [
     rating: '7.8',
     year: 2023,
     genres: ['Crime', 'Action'],
-    languages: ['English', 'Tamil']
+    languages: ['English', 'Tamil'],
+    cast: ['Kabir Sinha', 'Lena D\'Souza', 'Farhan Qureshi']
   },
   {
     id: 'laughter-circuit',
@@ -96,7 +110,8 @@ export const movieCatalog = [
     rating: '8.0',
     year: 2024,
     genres: ['Comedy', 'Family'],
-    languages: ['English']
+    languages: ['English'],
+    cast: ['Riya Kapoor', 'Mohan Das', 'Priya Nair']
   },
   {
     id: 'documented',
@@ -110,7 +125,8 @@ export const movieCatalog = [
     rating: '8.7',
     year: 2023,
     genres: ['Documentary'],
-    languages: ['English', 'Spanish']
+    languages: ['English', 'Spanish'],
+    cast: ['Director: Anika Bose', 'Producer: James Whitfield']
   }
 ];
 

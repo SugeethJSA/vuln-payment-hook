@@ -3,561 +3,593 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Checkout — FlipZon</title>
+  <title>CyberSec Gateway — Webhook Security Lab</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f1f3f6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #090d16;
+      color: #e2e8f0;
       min-height: 100vh;
-      color: #212121;
+      line-height: 1.5;
     }
 
-    /* ── MINI HEADER ─────────────────────────────────────── */
-    .fz-header {
-      background: #0f3460;
-      padding: 12px 24px;
+    /* ── HEADER ──────────────────────────────────────────────── */
+    .sec-header {
+      background: #0d1527;
+      border-bottom: 1px solid #1e293b;
+      padding: 14px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
     }
-    .fz-logo {
-      font-size: 22px;
-      font-weight: 900;
-      color: #e94560;
-      text-decoration: none;
-    }
-    .fz-logo span { color: #fff; font-weight: 400; font-size: 12px; margin-left: 6px; }
-    .fz-secure-badge {
+    .sec-logo {
       display: flex;
       align-items: center;
-      gap: 7px;
-      color: rgba(255,255,255,0.75);
+      gap: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+    .sec-logo-badge {
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+      color: #090d16;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .sec-status-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    .mode-pill.insecure {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .mode-pill.secure {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+    }
+    .btn-toggle-mode {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      padding: 6px 14px;
+      border-radius: 6px;
       font-size: 12px;
       font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .fz-secure-badge svg { width: 16px; height: 16px; color: #4ade80; }
+    .btn-toggle-mode:hover {
+      background: #334155;
+      color: #fff;
+    }
 
-    /* ── PAGE LAYOUT ─────────────────────────────────────── */
-    .fz-checkout-wrap {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 18px;
+    /* ── CONTAINER ───────────────────────────────────────────── */
+    .lab-container {
+      max-width: 1200px;
+      margin: 28px auto;
+      padding: 0 20px;
       display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 20px;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
     }
-    @media (max-width: 760px) {
-      .fz-checkout-wrap { grid-template-columns: 1fr; }
+    @media (max-width: 900px) {
+      .lab-container { grid-template-columns: 1fr; }
     }
 
-    /* ── PANEL CARDS ─────────────────────────────────────── */
-    .fz-card {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 22px 24px;
-      margin-bottom: 16px;
+    /* ── PANELS ──────────────────────────────────────────────── */
+    .panel {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
     }
-    .fz-card-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #0f3460;
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .panel-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-
-    /* ── FORM FIELDS ─────────────────────────────────────── */
-    .fz-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    .fz-row.full { grid-template-columns: 1fr; }
-    .fz-field { display: flex; flex-direction: column; gap: 5px; }
-    .fz-field label { font-size: 12px; font-weight: 700; color: #5a5a5a; letter-spacing: .3px; }
-    .fz-field input, .fz-field select {
-      border: 1px solid #d0d0d0;
-      border-radius: 5px;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: #212121;
-      transition: border-color .2s, box-shadow .2s;
-      outline: none;
-      background: #fff;
-    }
-    .fz-field input:focus, .fz-field select:focus {
-      border-color: #0f3460;
-      box-shadow: 0 0 0 3px rgba(15,52,96,0.1);
-    }
-    .fz-field input.card-field { letter-spacing: 2px; font-family: 'Courier New', monospace; }
-    .fz-field input::placeholder { color: #bbb; letter-spacing: .5px; }
-
-    /* Card row icons */
-    .card-input-wrap { position: relative; }
-    .card-input-wrap input { padding-right: 48px; width: 100%; }
-    .card-icons {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      gap: 4px;
-      pointer-events: none;
-    }
-    .card-icon-badge {
-      background: #f1f3f6;
-      border: 1px solid #d0d0d0;
-      border-radius: 3px;
-      padding: 2px 5px;
-      font-size: 9px;
-      font-weight: 900;
-      color: #555;
+    .panel-subtitle {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: -12px;
+      margin-bottom: 16px;
     }
 
-    /* ── ORDER SUMMARY (right column) ───────────────────── */
-    .fz-summary-card {
-      background: #fff;
+    /* ── ORDER BAR ───────────────────────────────────────────── */
+    .order-summary-box {
+      background: #182238;
+      border: 1px solid #283756;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 22px 24px;
-      position: sticky;
-      top: 90px;
-    }
-    .fz-summary-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #0f3460;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #f1f3f6;
-    }
-    .fz-summary-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      margin-bottom: 10px;
-      color: #555;
-    }
-    .fz-summary-row.total {
-      font-size: 17px;
-      font-weight: 800;
-      color: #212121;
-      padding-top: 12px;
-      border-top: 2px solid #f1f3f6;
-      margin-top: 8px;
-    }
-    .fz-summary-item {
-      display: flex;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
       gap: 12px;
-      margin-bottom: 14px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid #f1f3f6;
+      margin-bottom: 20px;
     }
-    .fz-summary-item-img {
-      width: 52px; height: 52px;
-      background: #f0f4ff;
-      border-radius: 6px;
+    .stat-item {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      flex-shrink: 0;
+      flex-direction: column;
     }
-    .fz-summary-item-name { font-size: 13px; font-weight: 600; color: #212121; }
-    .fz-summary-item-sub { font-size: 11px; color: #878787; margin-top: 3px; }
-
-    /* Status badge */
-    .fz-status-pill {
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stat-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-top: 2px;
+      font-family: monospace;
+    }
+    .order-status-pill {
       display: inline-block;
-      padding: 4px 12px;
+      padding: 2px 10px;
       border-radius: 12px;
       font-size: 12px;
       font-weight: 800;
-      margin-top: 6px;
+      width: fit-content;
+      margin-top: 4px;
     }
-    .fz-status-pill.pending { background: #fff8e1; color: #f59e0b; border: 1px solid #fcd34d; }
-    .fz-status-pill.paid    { background: #ecfdf5; color: #22c55e; border: 1px solid #86efac; }
+    .order-status-pill.pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .order-status-pill.paid { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
 
-    /* ── VERIFICATION BAR ────────────────────────────────── */
-    .fz-verify-wrap { margin: 16px 0; }
-    .fz-verify-label { font-size: 11px; color: #878787; margin-bottom: 6px; display: flex; justify-content: space-between; }
-    .fz-verify-track {
-      height: 6px;
-      background: #f1f3f6;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .fz-verify-bar {
-      height: 100%;
-      border-radius: 3px;
-      background: linear-gradient(90deg, #0f3460 0%, #e94560 100%);
-      width: 0%;
-      transition: width .4s ease;
-      animation: verifyPulse 2s ease-in-out infinite;
-    }
-    @keyframes verifyPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: .7; }
-    }
-
-    /* ── ACTION BUTTONS ──────────────────────────────────── */
-    .fz-btn-place {
-      width: 100%;
-      background: linear-gradient(135deg, #e94560 0%, #c73652 100%);
-      color: #fff;
-      border: none;
-      padding: 14px;
-      border-radius: 5px;
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-top: 18px;
-      letter-spacing: .3px;
-      transition: opacity .2s;
-    }
-    .fz-btn-place:hover { opacity: .9; }
-    .fz-trust-row {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      margin-top: 14px;
-    }
-    .fz-trust-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: #878787;
-    }
-
-    /* ── SUCCESS FLASH ───────────────────────────────────── */
-    .fz-success-banner {
-      display: none;
-      background: #ecfdf5;
-      border: 1px solid #86efac;
-      color: #15803d;
-      padding: 14px 18px;
+    /* ── FORM ELEMENTS ───────────────────────────────────────── */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group label { font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 0.5px; }
+    .field-group input, .field-group select {
+      background: #090d16;
+      border: 1px solid #334155;
       border-radius: 6px;
-      font-weight: 700;
-      font-size: 14px;
-      margin-top: 14px;
-      text-align: center;
+      padding: 10px 12px;
+      color: #f8fafc;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
     }
+    .field-group input:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
 
-    /* ── TECH DOCS DROPDOWN ──────────────────────────────── */
-    .fz-techdoc-wrap {
-      margin-top: 20px;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      overflow: hidden;
+    /* ── ATTACK CONSOLE ──────────────────────────────────────── */
+    .attack-box {
+      background: #090d16;
+      border: 1px dashed #ef4444;
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 16px;
     }
-    .fz-techdoc-toggle {
-      width: 100%;
-      background: #f8f9fa;
-      border: none;
+    .attack-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+    .attack-title {
       font-size: 13px;
-      font-weight: 700;
-      color: #555;
+      font-weight: 800;
+      color: #f87171;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-attack {
+      width: 100%;
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+      color: #fff;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 800;
       cursor: pointer;
-      text-align: left;
-      transition: background .2s;
+      transition: opacity 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
     }
-    .fz-techdoc-toggle:hover { background: #eef0f3; }
-    .fz-techdoc-toggle .arrow { transition: transform .25s; font-size: 11px; }
-    .fz-techdoc-toggle.open .arrow { transform: rotate(180deg); }
-    .fz-techdoc-body {
-      display: none;
-      padding: 16px;
-      background: #fff;
-      border-top: 1px solid #e0e0e0;
-    }
-    .fz-techdoc-body.open { display: block; }
-    .fz-techdoc-label {
+    .btn-attack:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-attack:active { transform: translateY(0); }
+
+    .code-display {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: 'Consolas', 'Courier New', monospace;
       font-size: 11px;
-      color: #878787;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-bottom: 8px;
-      margin-top: 12px;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 10px;
     }
-    .fz-techdoc-label:first-child { margin-top: 0; }
-    .fz-code-block {
-      background: #1a1a2e;
-      color: #4ade80;
-      padding: 12px 14px;
-      border-radius: 5px;
-      font-family: 'Courier New', monospace;
+    .code-hl { color: #f472b6; }
+    .code-val { color: #4ade80; }
+
+    /* ── TERMINAL LOGS ───────────────────────────────────────── */
+    .terminal-box {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      height: 220px;
+      overflow-y: auto;
+      padding: 12px;
+      font-family: 'Consolas', 'Courier New', monospace;
       font-size: 11px;
       line-height: 1.6;
-      overflow-x: auto;
-      white-space: pre;
     }
-    .fz-code-block .hl { color: #60a5fa; }
+    .log-line { margin-bottom: 6px; }
+    .log-time { color: #64748b; margin-right: 8px; }
+    .log-mode-insecure { color: #f87171; font-weight: 700; }
+    .log-mode-secure { color: #4ade80; font-weight: 700; }
 
-    a.fz-back { display: inline-block; color: #0f3460; font-size: 13px; font-weight: 600; text-decoration: none; margin-top: 10px; }
-    a.fz-back:hover { text-decoration: underline; }
+    /* ── ALERTS / MODALS ─────────────────────────────────────── */
+    .result-alert {
+      display: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .result-alert.success { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; }
+    .result-alert.error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; }
+
+    a.back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      font-size: 13px;
+      text-decoration: none;
+      margin-top: 12px;
+      transition: color 0.2s;
+    }
+    a.back-link:hover { color: #fff; }
   </style>
 </head>
 <body>
 
-  <!-- ── Mini header ──────────────────────────────────────── -->
-  <header class="fz-header">
-    <a href="/" class="fz-logo">FlipZon <span>| Secure Checkout</span></a>
-    <div class="fz-secure-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      256-bit SSL Encrypted
+  <!-- HEADER -->
+  <header class="sec-header">
+    <a href="/browse" class="sec-logo">
+      <span>⚡ CYBERSEC LAB</span>
+      <span class="sec-logo-badge">Webhook Security Testing Gateway</span>
+    </a>
+    <div class="sec-status-bar">
+      <div class="mode-pill insecure" id="modePill">
+        <span id="modeIcon">🔓</span>
+        <span id="modeText">INSECURE MODE</span>
+      </div>
+      <button class="btn-toggle-mode" onclick="toggleSecurityMode()">🔄 Switch Mode</button>
     </div>
   </header>
 
-  <div class="fz-checkout-wrap">
+  <!-- MAIN LAB WRAPPER -->
+  <div class="lab-container">
 
-    <!-- ── LEFT COLUMN ───────────────────────────────────── -->
+    <!-- LEFT COLUMN: PAYMENT MOCK & WEBHOOK ATTACK CONSOLE -->
     <div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">💳 Checkout Simulator</div>
+          <span style="font-size: 11px; color: #64748b;">Order State Monitor</span>
+        </div>
+        <p class="panel-subtitle">Simulate a standard user checkout or test out-of-band webhook notifications.</p>
 
-      <!-- Delivery Address -->
-      <div class="fz-card">
-        <div class="fz-card-title">📍 Delivery Address</div>
-        <div class="fz-row">
-          <div class="fz-field"><label>FIRST NAME</label><input type="text" placeholder="Rahul"></div>
-          <div class="fz-field"><label>LAST NAME</label><input type="text" placeholder="Sharma"></div>
-        </div>
-        <div class="fz-row full">
-          <div class="fz-field"><label>ADDRESS LINE 1</label><input type="text" placeholder="House / Flat No., Building Name"></div>
-        </div>
-        <div class="fz-row full">
-          <div class="fz-field"><label>ADDRESS LINE 2 (optional)</label><input type="text" placeholder="Street, Locality, Landmark"></div>
-        </div>
-        <div class="fz-row">
-          <div class="fz-field"><label>CITY</label><input type="text" placeholder="Chennai"></div>
-          <div class="fz-field"><label>PIN CODE</label><input type="text" placeholder="600001" maxlength="6"></div>
-        </div>
-        <div class="fz-row">
-          <div class="fz-field"><label>STATE</label>
-            <select>
-              <option>Tamil Nadu</option><option>Karnataka</option><option>Maharashtra</option>
-              <option>Delhi</option><option>Telangana</option><option>Other</option>
-            </select>
+        <!-- Order Summary -->
+        <div class="order-summary-box">
+          <div class="stat-item">
+            <span class="stat-label">Order Reference</span>
+            <span class="stat-value" id="summaryOrderId">ORD_...</span>
           </div>
-          <div class="fz-field"><label>MOBILE NUMBER</label><input type="tel" placeholder="98XXXXXXXX" maxlength="10"></div>
+          <div class="stat-item">
+            <span class="stat-label">Item / Plan</span>
+            <span class="stat-value" id="summaryProduct">Loading...</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Amount</span>
+            <span class="stat-value" id="summaryAmount">$0.00</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Status</span>
+            <span class="order-status-pill pending" id="summaryStatus">PENDING ⏳</span>
+          </div>
+        </div>
+
+        <!-- Simulated Card Form -->
+        <div class="form-row full">
+          <div class="field-group">
+            <label>CARD NUMBER (MOCK)</label>
+            <input type="text" value="4532 •••• •••• 8892" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field-group">
+            <label>EXPIRY</label>
+            <input type="text" value="12 / 28" readonly>
+          </div>
+          <div class="field-group">
+            <label>CVV</label>
+            <input type="password" value="888" readonly>
+          </div>
         </div>
       </div>
 
-      <!-- Payment Method -->
-      <div class="fz-card">
-        <div class="fz-card-title">💳 Payment Details</div>
+      <!-- WEBHOOK EXPLOIT & DEMO PANEL -->
+      <div class="panel" style="border-color: #ef4444;">
+        <div class="panel-header">
+          <div class="panel-title" style="color: #f87171;">💥 Webhook Security Exploit Panel</div>
+          <span style="font-size: 11px; color: #fca5a5; font-weight: 700;">Educational Demo</span>
+        </div>
+        <p class="panel-subtitle">
+          Demonstrate how unauthenticated webhooks allow attackers to mark pending orders as PAID without making a payment.
+        </p>
 
-        <div class="fz-row full">
-          <div class="fz-field">
-            <label>CARD NUMBER</label>
-            <div class="card-input-wrap">
-              <input type="text" class="card-field" placeholder="1234  5678  9012  3456" maxlength="19" id="cardNum"
-                oninput="formatCard(this)">
-              <div class="card-icons">
-                <span class="card-icon-badge">VISA</span>
-                <span class="card-icon-badge">MC</span>
-              </div>
-            </div>
+        <button class="btn-attack" onclick="triggerWebhookAttack()">
+          🚀 Trigger Webhook Forgery Attack
+        </button>
+
+        <div class="result-alert" id="attackAlert"></div>
+
+        <div class="attack-box">
+          <div class="attack-header">
+            <span class="attack-title">📡 Out-of-Band Payload Preview (curl)</span>
+            <button onclick="copyCurl()" style="background:#1e293b;color:#38bdf8;border:none;padding:4px 8px;border-radius:4px;font-size:10px;cursor:pointer;">Copy curl</button>
           </div>
-        </div>
-        <div class="fz-row">
-          <div class="fz-field"><label>EXPIRY DATE</label><input type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)"></div>
-          <div class="fz-field"><label>CVV</label><input type="password" placeholder="•••" maxlength="3"></div>
-        </div>
-        <div class="fz-row full">
-          <div class="fz-field"><label>CARDHOLDER NAME</label><input type="text" placeholder="Name as on card"></div>
-        </div>
-
-        <!-- Simulated verification bar -->
-        <div class="fz-verify-wrap">
-          <div class="fz-verify-label">
-            <span>Verifying payment gateway…</span>
-            <span id="verifyPct">0%</span>
-          </div>
-          <div class="fz-verify-track"><div class="fz-verify-bar" id="verifyBar"></div></div>
-        </div>
-
-        <!-- Technical Documentation dropdown (collapsed by default) -->
-        <div class="fz-techdoc-wrap">
-          <button class="fz-techdoc-toggle" id="techdocBtn" onclick="toggleTechdoc()">
-            <span>📄 Technical Documentation // Integration Gateway Manual</span>
-            <span class="arrow">▼</span>
-          </button>
-          <div class="fz-techdoc-body" id="techdocBody">
-            <p style="font-size:13px;color:#555;margin-bottom:12px;">
-              The webhook endpoint below is used by our payment processor to notify the server when a transaction resolves.
-              This section is intended for integration engineers and QA engineers testing the payment pipeline.
-            </p>
-
-            <div class="fz-techdoc-label">Webhook Endpoint</div>
-            <div class="fz-code-block">POST <span class="hl">http://localhost:3000/webhook/payment</span>
-Content-Type: application/json</div>
-
-            <div class="fz-techdoc-label">curl — Example payload for order confirmation</div>
-            <div class="fz-code-block">curl -X POST http://localhost:3000/webhook/payment \
+          <div class="code-display" id="curlCode">curl -X POST http://localhost:3000/webhook/payment \
   -H "Content-Type: application/json" \
-  -d '{
-    "order_id": "<span class="hl" id="docOrderId">ORDER_ID</span>",
-    "payment_success": true
-  }'</div>
-
-            <div class="fz-techdoc-label">Postman — Request configuration</div>
-            <div class="fz-code-block">Method:  POST
-URL:     http://localhost:3000/webhook/payment
-
-Headers:
-  Content-Type: application/json
-
-Body (raw JSON):
-{
-  "order_id": "<span class="hl" id="docOrderId2">ORDER_ID</span>",
-  "payment_success": true
-}</div>
-
-            <p style="font-size:11px;color:#878787;margin-top:10px;">
-              After dispatching the webhook, use "Check Order Status" to confirm the state transition to PAID.
-            </p>
-          </div>
+  -d '{"order_id":"ORDER_ID","payment_success":true}'</div>
         </div>
+      </div>
 
-      </div><!-- /Payment card -->
-
-      <a href="/" class="fz-back">← Return to Shopping</a>
+      <a href="/browse" class="back-link">← Return to Netflix Home</a>
     </div>
 
-    <!-- ── RIGHT COLUMN — Order Summary ─────────────────── -->
+    <!-- RIGHT COLUMN: HMAC GENERATOR & SERVER WEBHOOK LOGS -->
     <div>
-      <div class="fz-summary-card">
-        <div class="fz-summary-title">ORDER SUMMARY</div>
-
-        <!-- Item -->
-        <div class="fz-summary-item">
-          <div class="fz-summary-item-img">🛍</div>
-          <div>
-            <div class="fz-summary-item-name" id="summaryProductName">Loading…</div>
-            <div class="fz-summary-item-sub">Qty: 1 · In Stock · Ships in 24h</div>
-          </div>
+      <!-- HMAC GENERATOR -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🔐 HMAC Signature Calculator</div>
         </div>
+        <p class="panel-subtitle">Used when Secure Mode is enabled to generate valid signatures.</p>
 
-        <!-- Order ID -->
-        <div class="fz-summary-row">
-          <span style="font-size:11px;font-family:monospace;">Order Ref</span>
-          <span style="font-size:11px;font-family:monospace;color:#0f3460;font-weight:800;" id="summaryOrderId">—</span>
+        <div class="field-group" style="margin-bottom: 10px;">
+          <label>WEBHOOK SECRET</label>
+          <input type="text" id="secretInput" value="demo_secret_key_12345" readonly style="font-family: monospace;">
         </div>
-        <div class="fz-summary-row"><span>Status</span>
-          <span id="summaryStatus"><span class="fz-status-pill pending">PENDING</span></span>
+        <div class="field-group" style="margin-bottom: 10px;">
+          <label>GENERATED SIGNATURE (HMAC-SHA256)</label>
+          <input type="text" id="signatureOutput" value="Click calculate..." readonly style="font-family: monospace; color: #38bdf8;">
         </div>
-        <div class="fz-summary-row"><span>Item Price</span><span id="summaryAmount">₹—</span></div>
-        <div class="fz-summary-row"><span>Platform Fee</span><span>₹0</span></div>
-        <div class="fz-summary-row"><span>Delivery</span><span style="color:#388e3c;font-weight:700;">FREE</span></div>
-        <div class="fz-summary-row total"><span>Total Payable</span><span id="summaryTotal">₹—</span></div>
+        <button onclick="calculateHmac()" style="width:100%;background:#334155;color:#fff;border:none;padding:8px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">
+          Calculate Valid Signature
+        </button>
+      </div>
 
-        <!-- Check status button -->
-        <button class="fz-btn-place" onclick="checkOrderStatus()">🔄 Check Order Status</button>
-
-        <div class="fz-success-banner" id="successBanner">
-          ✅ Payment Confirmed! Redirecting to order receipt…
+      <!-- LIVE SERVER LOGS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🖥️ Server Webhook Log Stream</div>
+          <span style="font-size: 10px; color: #4ade80;">Live Feed</span>
         </div>
-
-        <div class="fz-trust-row">
-          <div class="fz-trust-item">🔒 Secure</div>
-          <div class="fz-trust-item">🚚 Fast Delivery</div>
-          <div class="fz-trust-item">↩ Easy Returns</div>
+        <div class="terminal-box" id="terminalLogs">
+          <div class="log-line"><span class="log-time">[System]</span> Initializing CyberSec log monitor...</div>
         </div>
       </div>
     </div>
 
-  </div><!-- /fz-checkout-wrap -->
+  </div>
 
   <script>
-    /* ── Extract order ID from URL ──────────────────────── */
-    const pathParts = window.location.pathname.split('/');
-    const orderId   = pathParts[pathParts.length - 1];
+    const orderId = window.location.pathname.split('/').pop();
+    let currentSecureMode = false;
 
-    /* ── Populate order reference fields ────────────────── */
-    document.getElementById('summaryOrderId').textContent  = orderId;
-    document.getElementById('docOrderId').textContent      = orderId;
-    document.getElementById('docOrderId2').textContent     = orderId;
+    document.getElementById('summaryOrderId').textContent = orderId;
 
-    /* ── Fetch and display order product details ─────────── */
+    // Load Order info
     fetch(`/api/order/${orderId}`)
       .then(r => r.json())
       .then(data => {
         if (data.product) {
-          document.getElementById('summaryProductName').textContent = data.product;
-          document.getElementById('summaryAmount').textContent      = `₹${data.amount}`;
-          document.getElementById('summaryTotal').textContent       = `₹${data.amount}`;
+          document.getElementById('summaryProduct').textContent = data.product;
+          document.getElementById('summaryAmount').textContent = `$${data.amount}`;
+          updateStatusPill(data.status);
         }
-      })
-      .catch(() => {
-        document.getElementById('summaryProductName').textContent = 'Product';
       });
 
-    /* ── Card number formatter ───────────────────────────── */
-    function formatCard(input) {
-      let v = input.value.replace(/\D/g, '').substring(0, 16);
-      input.value = v.replace(/(.{4})/g, '$1 ').trim();
-    }
-    function formatExpiry(input) {
-      let v = input.value.replace(/\D/g, '').substring(0, 4);
-      if (v.length >= 3) v = v.substring(0, 2) + ' / ' + v.substring(2);
-      input.value = v;
-    }
-
-    /* ── Simulated verification bar ─────────────────────── */
-    let pct = 0;
-    const verifyBar = document.getElementById('verifyBar');
-    const verifyPct = document.getElementById('verifyPct');
-    const barTimer  = setInterval(() => {
-      pct = pct >= 95 ? 40 : pct + Math.random() * 8;
-      verifyBar.style.width = pct + '%';
-      verifyPct.textContent  = Math.floor(pct) + '%';
-    }, 800);
-
-    /* ── Check order status ──────────────────────────────── */
-    async function checkOrderStatus() {
-      try {
-        const data = await fetch(`/api/order/${orderId}`).then(r => r.json());
-
-        if (data.status === 'PAID') {
-          clearInterval(barTimer);
-          verifyBar.style.background = 'linear-gradient(90deg,#22c55e,#16a34a)';
-          verifyBar.style.width      = '100%';
-          verifyPct.textContent       = '100%';
-
-          document.getElementById('summaryStatus').innerHTML =
-            '<span class="fz-status-pill paid">PAID ✅</span>';
-          document.getElementById('successBanner').style.display = 'block';
-
-          setTimeout(() => {
-            window.location.href = `/success/${orderId}`;
-          }, 2200);
-        } else {
-          document.getElementById('summaryStatus').innerHTML =
-            '<span class="fz-status-pill pending">PENDING ⏳</span>';
-        }
-      } catch (err) {
-        console.error('Status check failed:', err);
+    // Update status pill UI
+    function updateStatusPill(status) {
+      const el = document.getElementById('summaryStatus');
+      if (status === 'PAID') {
+        el.className = 'order-status-pill paid';
+        el.textContent = 'PAID ✅';
+      } else {
+        el.className = 'order-status-pill pending';
+        el.textContent = 'PENDING ⏳';
       }
     }
 
-    /* ── Tech-doc accordion ──────────────────────────────── */
-    function toggleTechdoc() {
-      const btn  = document.getElementById('techdocBtn');
-      const body = document.getElementById('techdocBody');
-      btn.classList.toggle('open');
-      body.classList.toggle('open');
+    // Fetch security status
+    function checkSecurityStatus() {
+      fetch('/api/security-status')
+        .then(r => r.json())
+        .then(data => {
+          currentSecureMode = data.secureMode;
+          const pill = document.getElementById('modePill');
+          const icon = document.getElementById('modeIcon');
+          const text = document.getElementById('modeText');
+
+          if (data.secureMode) {
+            pill.className = 'mode-pill secure';
+            icon.textContent = '🔒';
+            text.textContent = 'SECURE MODE';
+          } else {
+            pill.className = 'mode-pill insecure';
+            icon.textContent = '🔓';
+            text.textContent = 'INSECURE MODE';
+          }
+        });
     }
 
-    /* ── Auto poll status every 2 s ─────────────────────── */
-    const pollInterval = setInterval(checkOrderStatus, 2000);
-    setTimeout(() => clearInterval(pollInterval), 300000);
+    // Toggle security mode
+    function toggleSecurityMode() {
+      fetch('/api/toggle-security', { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+          checkSecurityStatus();
+          fetchLogs();
+        });
+    }
 
-    /* ── Initial check ───────────────────────────────────── */
-    checkOrderStatus();
+    // Trigger Webhook Attack
+    async function triggerWebhookAttack() {
+      const alertEl = document.getElementById('attackAlert');
+      alertEl.style.display = 'none';
+
+      try {
+        const bodyData = { order_id: orderId, payment_success: true };
+
+        // If in secure mode, calculate signature
+        if (currentSecureMode) {
+          bodyData.signature = document.getElementById('signatureOutput').value;
+        }
+
+        const res = await fetch('/webhook/payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+
+        const data = await res.json();
+
+        alertEl.style.display = 'block';
+        if (res.ok && data.success) {
+          alertEl.className = 'result-alert success';
+          alertEl.textContent = '💥 Webhook Accepted! Order Status Updated to PAID. Redirecting...';
+          updateStatusPill('PAID');
+          setTimeout(() => {
+            window.location.href = `/success/${orderId}`;
+          }, 1800);
+        } else {
+          alertEl.className = 'result-alert error';
+          alertEl.textContent = `❌ Webhook Rejected: ${data.error || 'Unauthorized request'}`;
+        }
+      } catch (err) {
+        alertEl.style.display = 'block';
+        alertEl.className = 'result-alert error';
+        alertEl.textContent = '❌ Attack request failed to send.';
+      }
+      fetchLogs();
+    }
+
+    // Copy curl command
+    function copyCurl() {
+      const text = document.getElementById('curlCode').textContent;
+      navigator.clipboard.writeText(text);
+      alert('curl command copied to clipboard!');
+    }
+
+    // Update curl code box
+    document.getElementById('curlCode').textContent = `curl -X POST http://localhost:3000/webhook/payment \\
+  -H "Content-Type: application/json" \\
+  -d '{"order_id":"${orderId}","payment_success":true}'`;
+
+    // Fetch server logs
+    function fetchLogs() {
+      fetch('/api/webhook-logs')
+        .then(r => r.json())
+        .then(data => {
+          const terminal = document.getElementById('terminalLogs');
+          terminal.innerHTML = '';
+          if (data.logs.length === 0) {
+            terminal.innerHTML = '<div class="log-line"><span class="log-time">[System]</span> No webhook requests logged yet.</div>';
+            return;
+          }
+          data.logs.forEach(log => {
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            const modeClass = log.mode === 'SECURE' ? 'log-mode-secure' : 'log-mode-insecure';
+            line.innerHTML = `<span class="log-time">[${new Date(log.timestamp).toLocaleTimeString()}]</span> <span class="${modeClass}">[${log.mode}]</span> ${JSON.stringify(log.data)}`;
+            terminal.appendChild(line);
+          });
+          terminal.scrollTop = terminal.scrollHeight;
+        });
+    }
+
+    // Simple sha256 helper for HMAC demo
+    async function calculateHmac() {
+      const secret = 'demo_secret_key_12345';
+      const msg = JSON.stringify({ order_id: orderId, payment_success: true });
+      const enc = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+      );
+      const signature = await crypto.subtle.sign('HMAC', key, enc.encode(msg));
+      const hashArray = Array.from(new Uint8Array(signature));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      document.getElementById('signatureOutput').value = hashHex;
+    }
+
+    // Auto poll status & logs
+    setInterval(async () => {
+      try {
+        const data = await fetch(`/api/order/${orderId}`).then(r => r.json());
+        if (data.status === 'PAID') {
+          updateStatusPill('PAID');
+          setTimeout(() => {
+            window.location.href = `/success/${orderId}`;
+          }, 1500);
+        }
+      } catch (err) {}
+    }, 2000);
+
+    setInterval(fetchLogs, 3000);
+    checkSecurityStatus();
+    fetchLogs();
   </script>
 </body>
 </html>

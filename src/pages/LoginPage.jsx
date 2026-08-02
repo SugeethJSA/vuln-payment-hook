@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { HiOutlineLockClosed, HiOutlineMail, HiOutlineShieldCheck } from 'react-icons/hi';
+import NetflixLogo from '../components/NetflixLogo';
 import { setAuthenticated, getSelectedProfile, isAuthenticated } from '../utils/session';
 
 export default function LoginPage() {
@@ -9,7 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    document.title = 'Netflix Login';
+    document.title = 'Netflix';
     if (isAuthenticated() && getSelectedProfile()) {
       navigate('/browse', { replace: true });
     }
@@ -22,64 +24,88 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background px-4 py-10 text-white sm:px-6 lg:px-12">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 rounded-3xl border border-white/10 bg-slate-950/80 p-8 shadow-netflix backdrop-blur-xl sm:p-12">
-        <div className="flex items-center justify-between">
-          <div className="text-3xl font-black tracking-[0.35em] text-netflix">NETFLIX</div>
-          <div className="text-right text-sm uppercase tracking-[0.25em] text-slate-500">Stream anywhere, anytime</div>
-        </div>
+    <div className="relative min-h-screen overflow-hidden bg-background text-white">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1574267432553-4b4628081c31?auto=format&fit=crop&w=1920&q=80)'
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
+      <div className="pointer-events-none absolute inset-0 bg-glow-radial" />
 
-        <div className="space-y-3">
-          <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">Sign In</h1>
-          <p className="max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
-            Log in to continue to a Netflix-inspired streaming experience built around your demo backend.
-          </p>
+      <header className="relative z-10 flex items-center justify-between px-6 py-6 sm:px-12">
+        <div className="flex items-center gap-3">
+          <NetflixLogo className="h-10 w-10 drop-shadow-lg" />
+          <span className="logo-3d select-none text-2xl font-black tracking-[-0.08em] text-white">
+            NETFLIX
+          </span>
         </div>
+      </header>
 
-        <motion.form
-          initial={{ opacity: 0, y: 16 }}
+      <main className="relative z-10 flex min-h-[calc(100vh-96px)] items-center justify-center px-4 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          onSubmit={handleSubmit}
-          className="grid gap-5"
+          transition={{ duration: 0.7, ease: 'easeOut' }}
+          className="w-full max-w-[440px] rounded-lg border border-white/10 bg-black/75 px-10 py-14 shadow-2xl shadow-black/80 backdrop-blur-md"
         >
-          <label className="grid gap-2 text-sm text-slate-300">
-            Email address
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-              placeholder="you@example.com"
-              className="w-full rounded-3xl border border-white/10 bg-slate-900/90 px-4 py-3 text-white outline-none transition focus:border-white focus:ring-2 focus:ring-netflix/30"
-            />
-          </label>
+          <h1 className="text-[2rem] font-medium leading-tight text-white">Sign In</h1>
 
-          <label className="grid gap-2 text-sm text-slate-300">
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-              placeholder="Enter password"
-              className="w-full rounded-3xl border border-white/10 bg-slate-900/90 px-4 py-3 text-white outline-none transition focus:border-white focus:ring-2 focus:ring-netflix/30"
-            />
-          </label>
+          <form onSubmit={handleSubmit} className="mt-8 grid gap-4">
+            <label className="grid gap-1.5 text-sm text-slate-300">
+              Email
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                placeholder="you@example.com"
+                className="w-full rounded-md border border-slate-600 bg-slate-800/80 px-4 py-3.5 text-white outline-none transition focus:border-white focus:ring-2 focus:ring-netflix/50"
+              />
+            </label>
 
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center rounded-3xl bg-netflix px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-[#f40612]"
-          >
-            Continue
-          </button>
-        </motion.form>
+            <label className="grid gap-1.5 text-sm text-slate-300">
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                placeholder="Enter password"
+                className="w-full rounded-md border border-slate-600 bg-slate-800/80 px-4 py-3.5 text-white outline-none transition focus:border-white focus:ring-2 focus:ring-netflix/50"
+              />
+            </label>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-400">
-          <p className="font-semibold text-white">Demo flow</p>
-          <p className="mt-2">Log in, pick a profile, browse the Netflix home experience, choose a movie, select a plan, then complete payment using the existing webhook demo backend.</p>
-        </div>
-      </div>
+            <button
+              type="submit"
+              className="mt-2 w-full rounded-md bg-netflix py-3.5 text-base font-semibold text-white transition hover:bg-netflix-hover hover:shadow-glow-red active:scale-[0.99]"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <p className="mt-6 text-sm text-slate-400">
+            New to Netflix?{' '}
+            <button className="font-medium text-white hover:underline">Sign up now.</button>
+          </p>
+
+          <div className="mt-8 space-y-3 border-t border-white/10 pt-6 text-xs leading-5 text-slate-400">
+            <p className="flex items-start gap-2">
+              <HiOutlineShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-netflix" />
+              Educational demo: any email and password sign you in. No real account is created.
+            </p>
+            <p className="flex items-start gap-2">
+              <HiOutlineLockClosed className="mt-0.5 h-4 w-4 shrink-0 text-netflix" />
+              Session is stored locally in your browser only.
+            </p>
+            <p className="flex items-start gap-2">
+              <HiOutlineMail className="mt-0.5 h-4 w-4 shrink-0 text-netflix" />
+              This page protects no data — it exists to demonstrate the webhook payment flow.
+            </p>
+          </div>
+        </motion.div>
+      </main>
     </div>
   );
 }
