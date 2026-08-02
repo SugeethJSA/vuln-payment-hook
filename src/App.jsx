@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import ProfileSelection from './pages/ProfileSelection';
 import HomePage from './pages/HomePage';
@@ -9,6 +10,32 @@ import PaymentUpdatePage from './pages/PaymentUpdatePage';
 import WatchPage from './pages/WatchPage';
 import LoadingScreen from './components/LoadingScreen';
 import { getSelectedProfile, isAuthenticated } from './utils/session';
+
+function ExternalPaymentRedirect() {
+  const { orderId } = useParams();
+  const location = useLocation();
+
+  useEffect(() => {
+    const backendPort = '3000';
+    const targetUrl = `http://${window.location.hostname}:${backendPort}/payment/${orderId}${location.search}`;
+    window.location.replace(targetUrl);
+  }, [orderId, location]);
+
+  return <LoadingScreen />;
+}
+
+function SuccessRedirect() {
+  const { orderId } = useParams();
+  const location = useLocation();
+
+  useEffect(() => {
+    const backendPort = '3000';
+    const targetUrl = `http://${window.location.hostname}:${backendPort}/success/${orderId}${location.search}`;
+    window.location.replace(targetUrl);
+  }, [orderId, location]);
+
+  return <LoadingScreen />;
+}
 
 function App() {
   const location = useLocation();
@@ -51,8 +78,10 @@ function App() {
             path="/payment-update/:id"
             element={auth ? (profile ? <PaymentUpdatePage /> : <Navigate to="/profiles" replace />) : <Navigate to="/login" replace />}
           />
+          <Route path="/payment/:orderId" element={<ExternalPaymentRedirect />} />
+          <Route path="/success/:orderId" element={<SuccessRedirect />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<LoadingScreen />} />
+          <Route path="*" element={<Navigate to="/browse" replace />} />
         </Routes>
       </motion.div>
     </AnimatePresence>

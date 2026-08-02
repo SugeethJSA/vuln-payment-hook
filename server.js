@@ -1,9 +1,13 @@
 // ⚠️ EDUCATIONAL DEMO ONLY - INTENTIONALLY VULNERABLE ⚠️
 // This code demonstrates webhook security weaknesses for teaching purposes
 
-const express = require('express');
-const crypto = require('crypto');
-const path = require('path');
+import express from 'express';
+import crypto from 'crypto';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
@@ -58,10 +62,6 @@ app.get('/success/:orderId', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'success.html'));
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
 // ==========================================
 // API ENDPOINTS
 // ==========================================
@@ -72,8 +72,8 @@ app.post('/api/create-order', (req, res) => {
   
   orders[orderId] = {
     order_id: orderId,
-    product: 'Premium Course',
-    amount: 999,
+    product: req.body?.movieId || 'Standard Plan',
+    amount: 9.99,
     status: 'PENDING',
     created_at: new Date().toISOString()
   };

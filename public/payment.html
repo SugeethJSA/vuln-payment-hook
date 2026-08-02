@@ -517,9 +517,10 @@
           alertEl.className = 'result-alert success';
           alertEl.textContent = '💥 Webhook Accepted! Order Status Updated to PAID. Redirecting...';
           updateStatusPill('PAID');
+          const movieIdParam = new URLSearchParams(window.location.search).get('movieId') || 'super-subbu';
           setTimeout(() => {
-            window.location.href = `/success/${orderId}`;
-          }, 1800);
+            window.location.href = `/success/${orderId}?movieId=${movieIdParam}`;
+          }, 1500);
         } else {
           alertEl.className = 'result-alert error';
           alertEl.textContent = `❌ Webhook Rejected: ${data.error || 'Unauthorized request'}`;

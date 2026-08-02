@@ -59,9 +59,15 @@ export default function PaymentUpdatePage() {
       console.warn('Backend API call warning:', err);
     }
 
+    const isLabDemo = searchParams.get('demo') === 'true' || searchParams.get('intercept') === 'true' || searchParams.get('lab') === 'true' || searchParams.get('vuln') === 'true';
+
     setSuccess(true);
     setTimeout(() => {
-      navigate(`/watch/${id || 'super-subbu'}?orderId=${generatedOrderId}`);
+      if (isLabDemo) {
+        navigate(`/checkout/${id || 'super-subbu'}?orderId=${generatedOrderId}&lab=true`);
+      } else {
+        navigate(`/checkout/${id || 'super-subbu'}?orderId=${generatedOrderId}`);
+      }
     }, 1200);
   };
 

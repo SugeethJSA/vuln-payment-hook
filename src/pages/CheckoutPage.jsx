@@ -67,7 +67,18 @@ export default function CheckoutPage() {
   const handleCompletePayment = () => {
     if (!orderId) return;
     setSubmitting(true);
-    window.location.href = `/payment/${orderId}?movieId=${id}`;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const isLabDemo = searchParams.get('demo') === 'true' || searchParams.get('intercept') === 'true' || searchParams.get('lab') === 'true' || searchParams.get('vuln') === 'true';
+
+    if (isLabDemo) {
+      // Lab / Interceptor Mode: Open CysCom CyberSec Webhook Gateway Page
+      const backendPort = '3000';
+      window.location.href = `http://${window.location.hostname}:${backendPort}/payment/${orderId}?movieId=${id}`;
+    } else {
+      // Standard Default Flow: Payment succeeds directly and unlocks streaming!
+      navigate(`/watch/${id}?orderId=${orderId}`);
+    }
   };
 
   if (!getSelectedProfile()) {

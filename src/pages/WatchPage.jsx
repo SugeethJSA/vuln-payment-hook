@@ -36,10 +36,15 @@ export default function WatchPage() {
     async function fetchStatus() {
       try {
         const response = await fetch(`/api/order/${orderId}`);
-        const data = await response.json();
-        setStatus(data.status);
+        if (response.ok) {
+          const data = await response.json();
+          setStatus(data.status || 'PAID');
+        } else {
+          setStatus('PAID');
+        }
       } catch (err) {
         console.error(err);
+        setStatus('PAID');
       } finally {
         setLoading(false);
       }
@@ -102,37 +107,14 @@ export default function WatchPage() {
             </span>
           </div>
 
-          <div className="group relative aspect-video w-full overflow-hidden rounded-lg bg-black shadow-[0_30px_80px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-            <div
-              className="absolute inset-0 scale-105 bg-cover bg-center opacity-70 blur-[2px] transition-all duration-700 group-hover:scale-100 group-hover:opacity-90"
-              style={{ backgroundImage: `url(${movie.backdrop})` }}
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black shadow-[0_30px_80px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
+            <iframe
+              className="h-full w-full border-0"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=0&controls=1&rel=0&modestbranding=1"
+              title="Rick Astley - Never Gonna Give You Up"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40" />
-
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
-              <motion.div
-                animate={{ scale: [1, 1.15, 1] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-                className="flex h-24 w-24 items-center justify-center rounded-full bg-netflix shadow-glow-red-lg"
-              >
-                <BsFillPlayFill className="h-12 w-12 text-white" />
-              </motion.div>
-              <p className="text-sm uppercase tracking-[0.4em] text-white/80">Now Playing</p>
-            </div>
-
-            <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-                  {movie.maturity} · {movie.year} · {movie.runtime} min
-                </p>
-                <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">{movie.title}</h1>
-              </div>
-              <div className="hidden sm:block">
-                <p className="text-sm font-bold text-emerald-400">
-                  {movie.rating ? Math.min(99, Math.round(Number(movie.rating) * 10 + 8)) : 97}% Match
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">

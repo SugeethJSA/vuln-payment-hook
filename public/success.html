@@ -290,7 +290,14 @@
 
   <script>
     const orderId = window.location.pathname.split('/').pop();
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('movieId') || 'super-subbu';
+
     document.getElementById('recOrderId').textContent = orderId;
+    const watchBtn = document.getElementById('watchBtn');
+    if (watchBtn) {
+      watchBtn.href = `/watch/${movieId}?orderId=${orderId}`;
+    }
 
     fetch(`/api/order/${orderId}`)
       .then(r => r.json())
@@ -305,6 +312,11 @@
           }
         }
       });
+
+    // Auto redirect back to watch movie page in 3.5 seconds
+    setTimeout(() => {
+      window.location.href = `/watch/${movieId}?orderId=${orderId}`;
+    }, 3500);
   </script>
 </body>
 </html>
