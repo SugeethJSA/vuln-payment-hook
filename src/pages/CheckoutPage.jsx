@@ -58,10 +58,16 @@ export default function CheckoutPage() {
     loadOrder();
   }, [orderId]);
 
+  useEffect(() => {
+    if (order?.status === 'PAID' && movie) {
+      navigate(`/watch/${movie.id}?orderId=${orderId}`, { replace: true });
+    }
+  }, [order, movie, navigate, orderId]);
+
   const handleCompletePayment = () => {
     if (!orderId) return;
     setSubmitting(true);
-    navigate(`/payment/${orderId}`);
+    window.location.href = `/payment/${orderId}?movieId=${id}`;
   };
 
   if (!getSelectedProfile()) {
